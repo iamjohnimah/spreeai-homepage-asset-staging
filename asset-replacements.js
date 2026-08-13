@@ -156,8 +156,34 @@
       html, body {
         overflow-x: clip !important;
         overflow-y: visible !important;
-        scroll-behavior: auto !important;
+        scroll-behavior: smooth !important;
+        overscroll-behavior-y: auto !important;
       }
+      body { display: block !important; min-height: 100% !important; }
+      [data-panel] {
+        position: relative !important;
+        top: auto !important;
+        height: 100svh !important;
+        min-height: 680px !important;
+        overflow: hidden !important;
+        z-index: auto !important;
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+      }
+      [data-panel] > [data-panel-inner] {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+        transition: none !important;
+      }
+      [data-panel] [data-reveal] {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+        transition: none !important;
+      }
+      [data-panel] { scroll-snap-align: none !important; }
       [data-panel] h1,
       [data-panel] h2,
       [data-panel] h3 { font-family: var(--spree-serif) !important; }
@@ -418,6 +444,7 @@
         z-index: 12 !important;
         padding: clamp(52px,6vw,82px) clamp(30px,7vw,110px) 32px !important;
         gap: clamp(32px,4vw,52px) !important;
+        scroll-snap-align: none !important;
       }
       [data-spreeai-social-links] a {
         color: rgba(255,255,255,.74) !important;
@@ -538,15 +565,6 @@
         opacity: 0;
         transform: translateY(-12px);
         pointer-events: none;
-      }
-      nav[data-spreeai-footer-docked="true"] {
-        position: absolute !important;
-        top: auto !important;
-        bottom: calc(100% + 22px) !important;
-        left: 50% !important;
-        right: auto !important;
-        transform: translateX(-50%) !important;
-        z-index: 20 !important;
       }
       @keyframes spreeaiPilotGlow {
         0%, 55%, 100% { background-position: 100% 0; box-shadow: 0 0 0 rgba(0,0,0,0), 0 10px 32px rgba(0,0,0,.18); }
@@ -764,6 +782,7 @@
         }
         nav.om-nav img[alt="SPREEAI"] { max-width: 92px !important; }
         [data-spreeai-scroll-cue], [data-spreeai-scroll-meter] { display: none !important; }
+        [data-panel] { height: 100svh !important; min-height: 640px !important; }
       }
     `;
     document.head.appendChild(style);
@@ -976,12 +995,19 @@
 
   function setupCleanPanelTransitions() {
     const panels = Array.from(document.querySelectorAll("[data-panel]"));
-    panels.forEach(function (panel, index) {
-      panel.style.zIndex = String(2 + index);
+    panels.forEach(function (panel) {
+      panel.style.position = "relative";
+      panel.style.top = "auto";
+      panel.style.zIndex = "auto";
+      panel.style.opacity = "1";
+      panel.style.transform = "none";
+      panel.style.animation = "none";
       const inner = panel.firstElementChild;
       if (!inner) return;
-      inner.style.animationName = "none";
-      if (index > 0) inner.style.backgroundColor = index === 5 ? "#080808" : "#fff";
+      inner.style.animation = "none";
+      inner.style.opacity = "1";
+      inner.style.transform = "none";
+      inner.style.transition = "none";
       inner.dataset.visible = "true";
       Array.from(inner.children).forEach(function (child) {
         child.dataset.spreeaiPanelChild = "true";
@@ -1214,16 +1240,7 @@
     if (nav) {
       const cta = Array.from(nav.querySelectorAll("a")).find(function (link) { return link.textContent.trim() === "Start your pilot"; });
       if (cta) cta.dataset.spreeaiPilotCta = "true";
-      if (footer && !nav.dataset.spreeaiFooterObserver) {
-        nav.dataset.spreeaiFooterObserver = "true";
-        const footerObserver = new IntersectionObserver(function (entries) {
-          nav.dataset.spreeaiFooterDocked = entries[0].isIntersecting ? "true" : "false";
-          if (entries[0].isIntersecting) nav.setAttribute("data-expanded", "1");
-          if (entries[0].isIntersecting && nav.parentElement !== footer) footer.insertBefore(nav, footer.firstChild);
-          if (!entries[0].isIntersecting && nav.parentElement === footer) document.body.appendChild(nav);
-        }, { threshold: .04, rootMargin: "0px 0px 140px 0px" });
-        footerObserver.observe(footer);
-      }
+      nav.dataset.spreeaiFooterDocked = "false";
     }
   }
 
