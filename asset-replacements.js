@@ -5,7 +5,7 @@
       poster: "A01_Nyah_Hero_FIGMA.jpg"
     },
     outputs: [
-      { slot: "tryon", video: "A02_Yuna_TryOn_Seedance25.mp4", poster: "A02_Yuna_TryOn_FIGMA.jpg", position: "50% 50%" },
+      { slot: "tryon", video: "A02_Adriana_TryOn_Seedance25.mp4", poster: "A02_Adriana_TryOn_FIGMA.jpg", position: "50% 50%" },
       { slot: "fit", video: "A03_Yuna_SizeFit_Seedance25.mp4", poster: "A03_Yuna_SizeFit_FIGMA.jpg", position: "50% 50%" },
       { slot: "styling", video: "A04_Yuna_Styling_Seedance25.mp4", poster: "A04_Yuna_Styling_FIGMA.jpg", position: "50% 50%" }
     ],
@@ -31,8 +31,8 @@
       }
     },
     demo: {
-      video: "A02_Yuna_TryOn_Seedance25.mp4",
-      poster: "A02_Yuna_TryOn_FIGMA.jpg",
+      video: "A02_Adriana_TryOn_Seedance25.mp4",
+      poster: "A02_Adriana_TryOn_FIGMA.jpg",
       position: "50% 50%"
     },
     pilot: {
