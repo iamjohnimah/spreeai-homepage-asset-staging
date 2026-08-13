@@ -237,42 +237,69 @@
     document.head.appendChild(style);
   }
 
-  function removePilotArtwork() {
+  function replacePilotArtwork() {
     const slot = document.querySelector("image-slot#pilot");
     if (!slot) return;
     const artwork = slot.parentElement;
     const panel = slot.closest("[data-panel]");
     const inner = panel && panel.firstElementChild;
-    if (artwork) artwork.remove();
-    if (!inner) return;
+    if (!artwork || !inner) return;
+
+    const video = document.createElement("video");
+    video.dataset.videoSlot = "pilot";
+    video.setAttribute("aria-label", "SPREEAI garment detail in motion");
+    video.style.cssText = "display:block;width:100%;height:100%;object-fit:cover;object-position:center";
+    slot.replaceWith(video);
+    replaceVideo(video, assets.demo);
+
+    artwork.style.width = "min(900px,72%)";
+    artwork.style.aspectRatio = "16 / 7";
+    artwork.style.maxHeight = "32vh";
+    artwork.style.borderRadius = "16px";
+    artwork.style.background = "#f1f1f1";
+    artwork.style.boxShadow = "var(--spree-shadow)";
+    artwork.style.outline = "1px solid rgba(17,17,17,.06)";
+    artwork.dataset.spreeaiModelFrame = "pilot";
+
+    const pilotObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          const play = video.play();
+          if (play && typeof play.catch === "function") play.catch(function () {});
+        } else {
+          video.pause();
+        }
+      });
+    }, { rootMargin: "25% 0px 25% 0px", threshold: 0 });
+    pilotObserver.observe(video);
+
     inner.dataset.spreeaiPilotRefined = "true";
     inner.style.justifyContent = "center";
-    inner.style.gap = "0";
-    inner.style.padding = "clamp(52px,8vh,96px) max(7.5rem,clamp(32px,5vw,80px)) 130px";
+    inner.style.gap = "clamp(14px,2.2vh,22px)";
+    inner.style.padding = "clamp(34px,5vh,60px) max(7.5rem,clamp(32px,5vw,80px)) 126px";
     inner.style.background = "radial-gradient(circle at 50% 34%, rgba(238,231,226,.7), rgba(255,255,255,0) 42%), #fff";
-    const content = inner.firstElementChild;
+    const content = artwork.nextElementSibling;
     if (content) {
       const actions = content.nextElementSibling;
-      if (actions && actions.querySelector("button")) {
-        content.appendChild(actions);
+      if (actions) {
         actions.style.position = "static";
-        actions.style.marginTop = "clamp(6px,1.2vh,12px)";
+        actions.style.marginTop = "0";
         actions.style.transform = "none";
         actions.style.flexWrap = "wrap";
         actions.style.justifyContent = "center";
       }
-      content.style.maxWidth = "940px";
-      content.style.gap = "clamp(12px,2vh,20px)";
-      content.style.padding = "clamp(34px,5vw,64px)";
-      content.style.border = "1px solid rgba(17,17,17,.08)";
-      content.style.borderRadius = "18px";
-      content.style.background = "rgba(255,255,255,.72)";
-      content.style.boxShadow = "0 24px 70px rgba(32,26,22,.09)";
-      content.style.backdropFilter = "blur(12px)";
+      content.style.maxWidth = "900px";
+      content.style.gap = "clamp(8px,1.4vh,14px)";
+      content.style.padding = "0";
+      content.style.border = "0";
+      content.style.borderRadius = "0";
+      content.style.background = "transparent";
+      content.style.boxShadow = "none";
+      content.style.backdropFilter = "none";
       const heading = content.querySelector("h2");
       if (heading) {
         heading.style.maxWidth = "860px";
-        heading.style.fontSize = "clamp(38px,4.6vw,70px)";
+        heading.style.fontSize = "clamp(32px,3.5vw,52px)";
         heading.style.lineHeight = "1.04";
       }
       const paragraph = content.querySelector("p");
@@ -348,7 +375,7 @@
 
   function applyPolish() {
     injectPolishStyles();
-    removePilotArtwork();
+    replacePilotArtwork();
     polishModelPanels();
     addScrollCue();
   }
