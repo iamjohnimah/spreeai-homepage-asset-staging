@@ -29,6 +29,10 @@
     demo: {
       video: "A08_Yuna_Macro_Seedance25.mp4",
       poster: "A08_Yuna_Macro_FIGMA.jpg"
+    },
+    pilotCta: {
+      image: "A10_Yuna_PilotCTA_Profile_FIGMA.png",
+      position: "50% 24%"
     }
   };
 
@@ -63,6 +67,26 @@
     if (sibling && sibling.tagName === "IMG" && !sibling.alt) sibling.style.display = "none";
   }
 
+  function replaceImageSlot(slot, config) {
+    if (!slot || slot.dataset.spreeaiReplaced) return;
+    slot.dataset.spreeaiReplaced = "true";
+    slot.setAttribute("src", config.image);
+    slot.setAttribute("fit", "cover");
+    slot.dataset.spreeaiObjectPosition = config.position;
+    function setCrop() {
+      const image = slot.shadowRoot && slot.shadowRoot.querySelector(".frame img");
+      if (image) {
+        image.style.left = config.position.split(" ")[0];
+        image.style.top = config.position.split(" ")[1];
+      }
+    }
+    requestAnimationFrame(function () {
+      setCrop();
+      requestAnimationFrame(setCrop);
+    });
+    setTimeout(setCrop, 250);
+  }
+
   function applyReplacements() {
     const root = document.getElementById("dc-root");
     if (!root) return false;
@@ -71,6 +95,9 @@
     const demo = document.querySelector('video[data-video-slot="demo"]');
     replaceVideo(hero, assets.hero);
     replaceVideo(demo, assets.demo);
+
+    const pilotCta = document.querySelector('image-slot#pilot');
+    replaceImageSlot(pilotCta, assets.pilotCta);
 
     const outputImages = Array.from(document.querySelectorAll('img[style*="top: 19%"]'));
     assets.outputs.forEach(function (config, index) {
@@ -83,13 +110,17 @@
       removeLegacyChannelOverlay(video);
     });
 
-    const expected = hero && demo && outputImages.length >= 3 &&
+    const expected = hero && demo && pilotCta && outputImages.length >= 3 &&
       Object.keys(assets.channels).every(function (slot) {
         return document.querySelector('video[data-video-slot="' + slot + '"]');
       });
     if (expected) {
       finished = true;
       document.documentElement.dataset.spreeaiAssets = "updated";
+      requestAnimationFrame(function () {
+        window.dispatchEvent(new Event("resize"));
+        if (typeof window.__spreeaiTick === "function") window.__spreeaiTick();
+      });
     }
     return expected;
   }
@@ -100,5 +131,7 @@
   });
 
   observer.observe(document.documentElement, { childList: true, subtree: true });
-  applyReplacements();
+  requestAnimationFrame(function () {
+    requestAnimationFrame(applyReplacements);
+  });
 })();
