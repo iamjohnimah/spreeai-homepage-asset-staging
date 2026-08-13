@@ -292,7 +292,7 @@
         padding-bottom: clamp(18px, 3vh, 36px);
       }
       [data-spreeai-platform-header]::after {
-        content: "ONE SYSTEM. EVERY DECISION.";
+        content: "BUILT TO EVOLVE";
         position: absolute;
         top: -24px;
         left: 16.666%;
@@ -506,7 +506,38 @@
         overflow: hidden;
         background-image: linear-gradient(110deg,#050505 0%,#050505 42%,#383838 49%,#050505 56%,#050505 100%) !important;
         background-size: 260% 100% !important;
-        animation: spreeaiPilotGlow 6s ease-in-out infinite !important;
+        animation: spreeaiPilotGlow 4.2s ease-in-out infinite !important;
+      }
+      [data-spreeai-persistent-pilot] {
+        position: fixed;
+        z-index: 100001;
+        top: clamp(18px,2.2vw,30px);
+        right: clamp(24px,3.2vw,52px);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        padding: 0 21px;
+        border: 1px solid rgba(255,255,255,.26);
+        border-radius: 999px;
+        color: #fff !important;
+        background-image: linear-gradient(110deg,#050505 0%,#050505 42%,#454545 49%,#050505 56%,#050505 100%);
+        background-size: 260% 100%;
+        box-shadow: 0 10px 32px rgba(0,0,0,.18);
+        font: 500 15px/1 var(--spree-sans) !important;
+        text-decoration: none;
+        white-space: nowrap;
+        animation: spreeaiPilotGlow 4.2s ease-in-out infinite;
+        transition: opacity .28s ease, transform .35s var(--spree-ease), background-color .25s ease;
+      }
+      [data-spreeai-persistent-pilot]:hover {
+        background-color: #1d1d1d;
+        transform: translateY(-2px);
+      }
+      [data-spreeai-persistent-pilot][data-hidden="true"] {
+        opacity: 0;
+        transform: translateY(-12px);
+        pointer-events: none;
       }
       nav[data-spreeai-footer-docked="true"] {
         position: absolute !important;
@@ -518,9 +549,9 @@
         z-index: 20 !important;
       }
       @keyframes spreeaiPilotGlow {
-        0%, 68%, 100% { background-position: 100% 0; box-shadow: 0 0 0 rgba(0,0,0,0); transform: translateZ(0) scale(1); }
-        78% { background-position: 0 0; box-shadow: 0 0 0 6px rgba(0,0,0,.08), 0 9px 28px rgba(0,0,0,.24); transform: translateZ(0) scale(1.035); }
-        88% { background-position: 0 0; box-shadow: 0 0 0 rgba(0,0,0,0); transform: translateZ(0) scale(1); }
+        0%, 55%, 100% { background-position: 100% 0; box-shadow: 0 0 0 rgba(0,0,0,0), 0 10px 32px rgba(0,0,0,.18); }
+        72% { background-position: 0 0; box-shadow: 0 0 0 6px rgba(215,123,99,.12), 0 12px 34px rgba(0,0,0,.28); }
+        86% { background-position: 0 0; box-shadow: 0 0 0 rgba(0,0,0,0), 0 10px 32px rgba(0,0,0,.18); }
       }
       [data-spreeai-scroll-cue] {
         position: fixed;
@@ -597,6 +628,10 @@
         [data-spreeai-shopper-frame] { left: 28% !important; width: 44% !important; }
       }
       @media (max-width: 720px) {
+        html, body, [data-panel] { max-width: 100vw !important; overflow-x: hidden !important; }
+        #dc-root { width: 100vw !important; max-width: 100vw !important; overflow-x: hidden !important; }
+        #dc-root > .sc-host,
+        #dc-root > .sc-host > div { width: 100vw !important; max-width: 100vw !important; overflow-x: hidden !important; }
         [data-spreeai-scroll-cue] { right: 10px; }
         [data-spreeai-scroll-meter] { right: 5px; }
         [data-spreeai-scroll-cue] > span:first-child { display: none; }
@@ -666,6 +701,69 @@
         [data-spreeai-social-links] { grid-column:1 / -1; width:100%; justify-content:flex-start; gap:18px 28px; }
         [data-spreeai-footer-wordmark] { margin-top: 0; }
         [data-spreeai-pilot-frame] { width: calc(100% - 40px) !important; aspect-ratio: 16/8 !important; }
+        [data-spreeai-persistent-pilot] {
+          display: none !important;
+        }
+        [data-screen-label="01 Hero"] [data-dc-tpl="17"] {
+          left: 20px !important;
+          right: 20px !important;
+          width: auto !important;
+          bottom: 128px !important;
+          gap: 13px !important;
+          padding: 0 20px !important;
+        }
+        [data-screen-label="01 Hero"] [data-dc-tpl="18"] {
+          max-width: 330px !important;
+          width: 100% !important;
+          font-size: 42px !important;
+          line-height: .98 !important;
+        }
+        [data-screen-label="01 Hero"] [data-dc-tpl="20"] {
+          width: 100% !important;
+          max-width: 320px !important;
+          font-size: 15px !important;
+          line-height: 1.35 !important;
+        }
+        [data-screen-label="01 Hero"] [data-dc-tpl="21"] {
+          max-width: 342px !important;
+          width: 100% !important;
+          gap: 8px !important;
+        }
+        [data-screen-label="01 Hero"] button {
+          flex: 0 1 auto !important;
+          min-width: 0 !important;
+          height: 42px !important;
+          padding: 8px 14px !important;
+          font-size: 13px !important;
+          white-space: nowrap !important;
+        }
+        [data-screen-label="01 Hero"] [data-dc-tpl="21"] > * { min-width: 0 !important; }
+        nav.om-nav {
+          bottom: 18px !important;
+          width: calc(100% - 24px) !important;
+          max-width: none !important;
+          justify-content: space-between !important;
+          padding: 9px 10px 9px 16px !important;
+          overflow: visible !important;
+        }
+        nav.om-nav .om-nav-links {
+          flex: 0 0 auto !important;
+          width: auto !important;
+          max-width: none !important;
+          margin-left: 10px !important;
+          opacity: 1 !important;
+          animation: none !important;
+          overflow: visible !important;
+        }
+        nav.om-nav .om-nav-links > a:not(:last-child) { display: none !important; }
+        nav.om-nav .om-nav-links > a:last-child {
+          display: inline-flex !important;
+          margin-left: 0 !important;
+          padding: 9px 15px !important;
+          font-size: 13px !important;
+        }
+        nav.om-nav img[alt="SPREEAI"] { max-width: 92px !important; }
+        [data-spreeai-scroll-cue], [data-spreeai-scroll-meter] { display: none !important; }
       }
     `;
     document.head.appendChild(style);
@@ -836,6 +934,24 @@
     update();
   }
 
+  function addPersistentPilotCta() {
+    if (document.querySelector("[data-spreeai-persistent-pilot]")) return;
+    const cta = document.createElement("a");
+    cta.dataset.spreeaiPersistentPilot = "true";
+    cta.href = "https://spreeai.com/create-account/";
+    cta.textContent = "Start a pilot";
+    cta.setAttribute("aria-label", "Start a SPREEAI pilot");
+    document.body.appendChild(cta);
+
+    const footer = document.querySelector("footer");
+    if (footer) {
+      const observer = new IntersectionObserver(function (entries) {
+        cta.dataset.hidden = entries[0].isIntersecting ? "true" : "false";
+      }, { threshold: .08 });
+      observer.observe(footer);
+    }
+  }
+
   function addBrandLoader() {
     document.documentElement.dataset.spreeaiLoading = "false";
     document.documentElement.style.removeProperty("overflow");
@@ -967,6 +1083,7 @@
 
     if (problem) {
       problem.dataset.spreeaiProblem = "true";
+      addSectionLabel(problem, "What SPREEAI does");
       const statWords = Array.from(problem.querySelectorAll("div,span")).filter(function (element) {
         return ["ONE", "THREE", "EVERY"].indexOf(element.textContent.trim()) >= 0 && element.children.length === 0;
       });
@@ -974,7 +1091,7 @@
     }
     if (product) {
       product.dataset.spreeaiProduct = "true";
-      addSectionLabel(product, "The intelligence layer for fashion commerce");
+      addSectionLabel(product, "The product");
       setupAutoCycle(product, Array.from(product.querySelectorAll("button")), 5200);
     }
     if (platform) {
@@ -990,19 +1107,22 @@
     }
     if (channels) {
       channels.dataset.spreeaiChannels = "true";
-      addSectionLabel(channels, "One platform. Every shopping moment.");
+      addSectionLabel(channels, "Where it works");
       setupAutoCycle(channels, Array.from(channels.querySelectorAll("button")), 5600);
     }
     if (timeline) {
       timeline.dataset.spreeaiTimeline = "true";
-      addSectionLabel(timeline, "From proof to scale");
+      addSectionLabel(timeline, "The pilot");
       const grid = timeline.firstElementChild && timeline.firstElementChild.children[1];
       if (grid) {
         grid.dataset.spreeaiTimelineGrid = "true";
         Array.from(grid.children).forEach(function (card) { card.dataset.spreeaiTimelineCard = "true"; });
       }
     }
-    if (demo) demo.dataset.spreeaiDemo = "true";
+    if (demo) {
+      demo.dataset.spreeaiDemo = "true";
+      addSectionLabel(demo, "SPREEAI in motion");
+    }
   }
 
   function setupCardSpotlights() {
@@ -1107,6 +1227,64 @@
     }
   }
 
+  function wireNavigation() {
+    const panels = panelMap();
+    const scrollToPanel = function (label) {
+      const panel = panels[label];
+      if (panel) panel.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+    const routes = {
+      "Explore the platform": function (event) { event.preventDefault(); scrollToPanel("03 One input"); },
+      "Meet the team": "https://spreeai.com/meet-the-team/",
+      "Become a partner": "https://spreeai.com/partners/",
+      "Latest thinking": "https://spreeai.com/spreeai-at-carnegie-mellon/",
+      "See a live demo": "https://demo.spreeai.com/",
+      "Partner portal": "https://partner.spreeai.com/",
+      "Start a pilot": "https://spreeai.com/create-account/",
+      "Start your pilot": "https://spreeai.com/create-account/"
+    };
+    document.querySelectorAll("nav a").forEach(function (link) {
+      const route = routes[link.textContent.trim()];
+      if (!route) return;
+      if (typeof route === "function") {
+        link.href = "#product";
+        link.addEventListener("click", route);
+      } else {
+        link.href = route;
+      }
+    });
+
+    const heroButtons = panels["01 Hero"] && panels["01 Hero"].querySelectorAll("button");
+    if (heroButtons && heroButtons[0]) heroButtons[0].addEventListener("click", function () { scrollToPanel("03 One input"); });
+    if (heroButtons && heroButtons[1]) heroButtons[1].addEventListener("click", function () { window.location.href = "https://spreeai.com/create-account/"; });
+
+    const pilotButtons = panels["08 Pilot CTA"] && panels["08 Pilot CTA"].querySelectorAll("button");
+    if (pilotButtons && pilotButtons[0]) pilotButtons[0].addEventListener("click", function () { window.location.href = "https://spreeai.com/create-account/"; });
+    if (pilotButtons && pilotButtons[1]) pilotButtons[1].addEventListener("click", function () { window.location.href = "https://spreeai.com/partners/"; });
+  }
+
+  function stabilizeMobileViewport() {
+    if (!window.matchMedia("(max-width: 720px)").matches) return;
+    const width = Math.max(320, Math.min(window.innerWidth, document.documentElement.clientWidth || window.innerWidth));
+    const viewport = document.querySelector('meta[name="viewport"]');
+    if (viewport) viewport.setAttribute("content", "width=" + width + ", initial-scale=1, maximum-scale=1");
+    [document.documentElement, document.body, document.getElementById("dc-root")].forEach(function (element) {
+      if (!element) return;
+      element.style.width = width + "px";
+      element.style.maxWidth = width + "px";
+      element.style.overflowX = "hidden";
+    });
+    const root = document.getElementById("dc-root");
+    if (root && root.firstElementChild) {
+      root.firstElementChild.style.width = width + "px";
+      root.firstElementChild.style.maxWidth = width + "px";
+      if (root.firstElementChild.firstElementChild) {
+        root.firstElementChild.firstElementChild.style.width = width + "px";
+        root.firstElementChild.firstElementChild.style.maxWidth = width + "px";
+      }
+    }
+  }
+
   function replaceExactText(root, replacements) {
     if (!root) return;
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
@@ -1130,77 +1308,78 @@
 
     replaceExactText(panels["01 Hero"], {
       "Your catalog.": "One platform.",
-      "On every body.": "Every body.",
-      "Virtual try-on, fit prediction and outfit intelligence — from one customer photo, live across every shopping channel.": "Virtual try-on, fit intelligence, and smart styling—working together across every shopper, garment, and channel.",
-      "See it on your catalogue": "See it on your catalog",
+      "On every body.": "Every shopper.",
+      "Virtual try-on, fit prediction and outfit intelligence — from one customer photo, live across every shopping channel.": "SPREEAI is the fashion-commerce platform that brings virtual try-on, fit intelligence, and styling into one journey—online, in store, and with an advisor.",
+      "See it on your catalogue": "Explore the platform",
       "Try a live demo": "Explore the platform"
     });
 
     replaceExactText(panels["02 Problem"], {
-      "Fit uncertainty costs conversion and drives customer returns": "Shopping is one decision. Technology made it three.",
-      "69% of shoppers leave a product page to find better information — and most never come back.": "Try-on here. Fit there. Styling somewhere else. SPREEAI brings the entire decision into one platform.",
-      "#1": "ONE",
-      "Reason for cart abandonment is sizing variance": "Connected journey from product page to purchase",
-      "70%": "THREE",
-      "Of fashion returns are due to fit, not personal taste": "Intelligence systems, working as one",
-      "71%": "EVERY",
-      "Would buy more often if virtual try-on were available": "Shopping moments, powered by the same platform"
+      "Fit uncertainty costs conversion and drives customer returns": "One shopper. One decision. One connected experience.",
+      "69% of shoppers leave a product page to find better information — and most never come back.": "SPREEAI connects the questions that shape a purchase—from how it looks to whether it fits and what completes it.",
+      "#1": "SEE",
+      "Reason for cart abandonment is sizing variance": "Visualize the garment on the shopper",
+      "70%": "FIT",
+      "Of fashion returns are due to fit, not personal taste": "Recommend the right size with confidence",
+      "71%": "STYLE",
+      "Would buy more often if virtual try-on were available": "Turn one item into a complete look"
     });
 
     replaceExactText(panels["03 One input"], {
-      "One input.": "One platform.",
-      "Three outputs.": "Three answers.",
-      "Photorealistic render of the exact garment on the customer's own body — fabric drape and proportion included, not a generic model swap.": "See the exact garment on the shopper's own body—with realistic drape, scale, and proportion.",
-      "Fit builds confidence. Confidence converts.": "The right size. Before checkout.",
-      "A size recommendation built from body measurements and the garment's actual pattern data, not just a size chart lookup.": "Fit intelligence connects body measurements with garment data to recommend the size that feels right.",
-      "From one piece to the whole look.": "One garment. A complete look.",
-      "Coordinated outfit picks pulled from the live catalogue, so the recommendation is always something they can actually buy.": "Styling intelligence turns one product into coordinated, shoppable outfits from the live catalog.",
+      "One input.": "See it.",
+      "Three outputs.": "Fit it. Style it.",
+      "Photorealistic render of the exact garment on the customer's own body — fabric drape and proportion included, not a generic model swap.": "Show the exact garment on the shopper—with realistic drape, scale, and proportion.",
+      "Fit builds confidence. Confidence converts.": "Find the right size.",
+      "A size recommendation built from body measurements and the garment's actual pattern data, not just a size chart lookup.": "Connect shopper measurements with garment data to recommend the right size.",
+      "From one piece to the whole look.": "Complete the look.",
+      "Coordinated outfit picks pulled from the live catalogue, so the recommendation is always something they can actually buy.": "Build coordinated, shoppable outfits from the live catalog.",
       "Try on": "Virtual try-on",
       "Size and fit": "Fit intelligence"
     });
 
     replaceExactText(panels["04 Why SPREEAI"], {
-      "Why": "Not a",
-      "SPREEAI": "feature.",
-      "is different": "The platform.",
-      "Other platforms fragment the decision. Visualization tools don't solve for fit. Fit tools don't address style. Most try-on experiences add friction instead of removing it.": "Try-on. Fit. Styling. Most solutions stop at one. SPREEAI connects all three in a single platform.",
-      "Less hesitation": "One connected decision",
-      "The decision stays on your product page.": "See it, size it, and style it in one flow.",
-      "Fewer returns": "Every channel in sync",
-      "Expectations and fit align before checkout.": "Online, in-store, and clienteling share one platform.",
-      "Larger baskets": "More from every garment",
-      "A product becomes a coordinated look.": "Turn one product into a complete, shoppable look.",
-      "Live in days": "Built to launch",
-      "No reshoots. No infrastructure rebuild.": "Go live without reshoots or rebuilding your commerce stack."
+      "Why": "Built for",
+      "SPREEAI": "what comes",
+      "is different": "next.",
+      "Other platforms fragment the decision. Visualization tools don't solve for fit. Fit tools don't address style. Most try-on experiences add friction instead of removing it.": "Try-on, fit, and styling are the first experiences on one shared shopper and catalog foundation. New decision tools can join the same platform as commerce evolves.",
+      "Less hesitation": "One shopper",
+      "The decision stays on your product page.": "Signals can carry across the journey.",
+      "Fewer returns": "One catalog",
+      "Expectations and fit align before checkout.": "Products, fit, and styling stay connected.",
+      "Larger baskets": "Every channel",
+      "A product becomes a coordinated look.": "Ecommerce, stores, and clienteling work together.",
+      "Live in days": "More to come",
+      "No reshoots. No infrastructure rebuild.": "Motion, 360° views, deeper personalization, and new categories—on the same foundation."
     });
 
     replaceExactText(panels["05 Shopper types"], {
-      "Convert uncertainty into a decision.": "Confidence, built into every product page.",
-      "Add try-on, fit, and styling at the moment of consideration, inside the experience customers already know.": "Let shoppers see it, size it, and style it—without leaving the moment of intent.",
-      "More from every fitting room.": "One platform. A smarter store.",
-      "Give associates a visual, data-informed way to move from one garment to the right size and the complete look.": "Give associates the same intelligence to recommend the right size, the next piece, and the complete look.",
-      "Private client styling, anywhere.": "Clienteling that continues everywhere.",
-      "Create curated, customer-specific looks that advisors and stylists can share before the client arrives—or after they leave.": "Create personal looks advisors can build, share, and continue before, during, or after an appointment.",
+      "Convert uncertainty into a decision.": "From product page to confidence.",
+      "Add try-on, fit, and styling at the moment of consideration, inside the experience customers already know.": "Let shoppers visualize, size, and style without leaving the page.",
+      "More from every fitting room.": "A smarter fitting room.",
+      "Give associates a visual, data-informed way to move from one garment to the right size and the complete look.": "Give associates the same intelligence at the mirror and on the floor.",
+      "Private client styling, anywhere.": "Personal service, anywhere.",
+      "Create curated, customer-specific looks that advisors and stylists can share before the client arrives—or after they leave.": "Help advisors curate and share personal looks before, during, or after an appointment.",
       "Online shoppers": "Ecommerce",
       "In-store customers": "Retail stores",
       "Very Important Clients": "Clienteling"
     });
 
     replaceExactText(panels["06 Pilot timeline"], {
-      "From first call to a live pilot on your catalogue in days.": "A platform you can prove in days.",
-      "Catalogue sync": "Connect the catalog",
-      "We pull a sample from your product feed. No reshoot, no new asset spec.": "We prepare a representative product set. No reshoots. No new asset workflow.",
-      "Brand fit pass": "Make it yours",
-      "UI matched to your site's type, color, and layout, so it looks native, not bolted on.": "We tune the experience to your brand, customers, and commerce journey.",
-      "Live on a page set": "Launch the platform",
-      "A single script tag live on a category or product page of your choosing.": "Try-on, fit, and styling go live together on a selected page set.",
-      "Exit anytime": "Learn, then scale",
-      "Pilots run month to month. Remove the tag and it's gone, nothing left behind.": "Measure what matters. Refine the experience. Expand when the value is clear."
+      "From first call to a live pilot on your catalogue in days.": "Prove it on your catalog.",
+      "Day": "Step",
+      "Catalogue sync": "Select products",
+      "We pull a sample from your product feed. No reshoot, no new asset spec.": "Choose a representative catalog set. No reshoots.",
+      "Brand fit pass": "Match the brand",
+      "UI matched to your site's type, color, and layout, so it looks native, not bolted on.": "Tune the experience to your brand and journey.",
+      "Live on a page set": "Launch",
+      "A single script tag live on a category or product page of your choosing.": "Go live on selected product pages.",
+      "Exit anytime": "Measure, then scale",
+      "Pilots run month to month. Remove the tag and it's gone, nothing left behind.": "Learn what works. Expand when the value is clear."
     });
 
     replaceExactText(panels["08 Pilot CTA"], {
-      "See SPREEAI on your product catalogue in 48 hours": "See the whole platform on your catalog.",
-      "We'll run SPREEAI on a selection of your catalog. No integration needed. Exit anytime.": "In 48 hours, see try-on, fit, and styling working together on your own products.",
+      "See SPREEAI on your product catalogue in 48 hours": "Start with your catalog.",
+      "We'll run SPREEAI on a selection of your catalog. No integration needed. Exit anytime.": "See SPREEAI on a representative product set in 48 hours. No reshoot. No long implementation.",
       "Start a pilot": "Start your pilot",
       "Schedule a conversation": "Talk to our team"
     });
@@ -1208,12 +1387,14 @@
     replaceExactText(document.querySelector("footer"), {
       "Explore the product": "Explore the platform",
       "Try a live demo": "See a live demo",
-      "Partner login": "Partner portal"
+      "Partner login": "Partner portal",
+      "Read the latest": "Latest thinking"
     });
     replaceExactText(document.querySelector("nav"), {
       "Explore the product": "Explore the platform",
       "Try a live demo": "See a live demo",
       "Partner login": "Partner portal",
+      "Read the latest": "Latest thinking",
       "Start a pilot": "Start your pilot"
     });
     document.documentElement.dataset.spreeaiCopy = "platform";
@@ -1228,12 +1409,17 @@
       if (node) node.nodeValue = label;
     }
 
-    setButtonLabel(panels["01 Hero"] && panels["01 Hero"].querySelectorAll("button")[0], "See it on your catalog");
+    setButtonLabel(panels["01 Hero"] && panels["01 Hero"].querySelectorAll("button")[0], "Explore the platform");
+    setButtonLabel(panels["01 Hero"] && panels["01 Hero"].querySelectorAll("button")[1], "Start your pilot");
+    const legacyHeroButton = panels["01 Hero"] && Array.from(panels["01 Hero"].querySelectorAll("button")).find(function (button) {
+      return button.textContent.trim() === "See it on your catalogue";
+    });
+    setButtonLabel(legacyHeroButton, "Explore the platform");
     setButtonLabel(panels["08 Pilot CTA"] && panels["08 Pilot CTA"].querySelectorAll("button")[0], "Start your pilot");
     setButtonLabel(panels["08 Pilot CTA"] && panels["08 Pilot CTA"].querySelectorAll("button")[1], "Talk to our team");
 
     const shopperHeadings = panels["05 Shopper types"] && panels["05 Shopper types"].querySelectorAll("h2");
-    if (shopperHeadings && shopperHeadings[2]) shopperHeadings[2].textContent = "Clienteling that continues everywhere.";
+    if (shopperHeadings && shopperHeadings[2]) shopperHeadings[2].textContent = "Personal service, anywhere.";
 
     const legacyFootnote = panels["04 Why SPREEAI"] && Array.from(panels["04 Why SPREEAI"].querySelectorAll("p,span,div")).find(function (element) {
       return element.textContent.trim().indexOf("*Results vary") === 0;
@@ -1251,8 +1437,11 @@
     setupCleanPanelTransitions();
     setupCardSpotlights();
     enhanceFooterAndNav();
+    wireNavigation();
+    stabilizeMobileViewport();
     addScrollCue();
     addScrollMeter();
+    addPersistentPilotCta();
   }
 
   function applyReplacements() {
