@@ -5,9 +5,9 @@
       poster: "A01_Nyah_Hero_FIGMA.jpg"
     },
     outputs: [
-      { image: "A02_Yuna_TryOn_FIGMA.jpg", position: "50% 50%" },
-      { image: "A03_Yuna_SizeFit_FIGMA.jpg", position: "50% 50%" },
-      { image: "A04_Yuna_Styling_FIGMA.jpg", position: "50% 50%" }
+      { slot: "tryon", video: "A02_Yuna_TryOn_Seedance25.mp4", poster: "A02_Yuna_TryOn_FIGMA.jpg", position: "50% 50%" },
+      { slot: "fit", video: "A03_Yuna_SizeFit_Seedance25.mp4", poster: "A03_Yuna_SizeFit_FIGMA.jpg", position: "50% 50%" },
+      { slot: "styling", video: "A04_Yuna_Styling_Seedance25.mp4", poster: "A04_Yuna_Styling_FIGMA.jpg", position: "50% 50%" }
     ],
     outputProducts: {
       top: "Yuna_Jacket.png",
@@ -31,8 +31,14 @@
       }
     },
     demo: {
-      video: "A08_Yuna_Macro_Seedance25.mp4",
-      poster: "A08_Yuna_Macro_FIGMA.jpg"
+      video: "A02_Yuna_TryOn_Seedance25.mp4",
+      poster: "A02_Yuna_TryOn_FIGMA.jpg",
+      position: "50% 50%"
+    },
+    pilot: {
+      video: "A04_Yuna_Styling_Seedance25.mp4",
+      poster: "A04_Yuna_Styling_FIGMA.jpg",
+      position: "50% 48%"
     }
   };
 
@@ -95,23 +101,24 @@
   function replaceOutputImage(image, config) {
     if (!image || image.dataset.spreeaiReplaced) return;
     image.dataset.spreeaiReplaced = "true";
-    image.src = config.image;
-    image.style.objectFit = "cover";
-    image.style.objectPosition = config.position;
-    image.style.left = "50%";
-    image.style.top = "19%";
-    image.style.width = "19.4%";
-    image.style.height = "calc(81% - 128px)";
-    image.style.background = "#f2f2f2";
-    image.style.borderRadius = "3px";
-
     const parent = image.parentElement;
+    const video = document.createElement("video");
+    video.dataset.videoSlot = "output-" + config.slot;
+    video.dataset.spreeaiModelFrame = "output";
+    video.setAttribute("aria-label", "SPREEAI " + config.slot + " model experience");
+    video.style.cssText = "position:absolute;left:50%;top:17%;transform:translateX(-50%);width:36%;height:calc(83% - 112px);object-fit:cover;object-position:" + config.position + ";background:#f2f2f2;border-radius:18px;box-shadow:var(--spree-shadow);outline:1px solid rgba(255,255,255,.5);display:block";
+    image.insertAdjacentElement("beforebegin", video);
+    image.style.visibility = "hidden";
+    image.style.opacity = "0";
+    image.style.pointerEvents = "none";
+    replaceVideo(video, config);
+
     addOutputProductCard(parent, {
       slot: "top",
       image: assets.outputProducts.top,
       label: "Top",
-      left: "56.25%",
-      top: "21.8%",
+      left: "61%",
+      top: "23%",
       productLeft: "50%",
       productTop: "46%"
     });
@@ -119,8 +126,8 @@
       slot: "bottom",
       image: assets.outputProducts.bottom,
       label: "Bottom",
-      left: "33.8%",
-      top: "49.5%",
+      left: "29%",
+      top: "54%",
       productLeft: "86%",
       productTop: "50%"
     });
@@ -175,6 +182,353 @@
       [data-spreeai-product-card] {
         border: 1px solid rgba(17,17,17,.06);
         box-shadow: 0 12px 30px rgba(22,19,16,.12) !important;
+        animation: spreeaiProductFloat 5.6s ease-in-out infinite;
+      }
+      [data-spreeai-product-card="bottom"] { animation-delay: -2.8s; }
+      @keyframes spreeaiProductFloat {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+      }
+      [data-spreeai-loader] {
+        position: fixed;
+        inset: 0;
+        z-index: 2147483647;
+        display: grid;
+        place-items: center;
+        background: #f7f5f2;
+        color: #080808;
+        opacity: 1;
+        visibility: visible;
+        transition: opacity .72s var(--spree-ease), visibility .72s;
+      }
+      [data-spreeai-loader][data-exit="true"] {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      [data-spreeai-loader-mark] {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        animation: spreeaiLoaderMark 1.25s var(--spree-ease) both;
+      }
+      [data-spreeai-loader-mark] img {
+        display: block;
+        width: clamp(150px, 20vw, 260px);
+        height: auto;
+      }
+      [data-spreeai-loader-line] {
+        width: clamp(120px, 15vw, 210px);
+        height: 1px;
+        background: rgba(0,0,0,.15);
+        overflow: hidden;
+      }
+      [data-spreeai-loader-line]::after {
+        content: "";
+        display: block;
+        width: 100%;
+        height: 100%;
+        background: #050505;
+        transform-origin: left;
+        animation: spreeaiLoaderLine 1.15s .12s var(--spree-ease) both;
+      }
+      @keyframes spreeaiLoaderMark {
+        from { opacity: 0; transform: translateY(12px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes spreeaiLoaderLine {
+        from { transform: scaleX(0); }
+        to { transform: scaleX(1); }
+      }
+      html[data-spreeai-loading="true"],
+      html[data-spreeai-loading="true"] body { overflow: hidden !important; }
+      [data-spreeai-stage-content] {
+        transition: opacity .5s var(--spree-ease), transform .6s var(--spree-ease);
+      }
+      [data-spreeai-stage-content][data-visible="false"] {
+        opacity: 0 !important;
+        transform: translateY(18px) !important;
+        pointer-events: none !important;
+      }
+      [data-spreeai-section-label] {
+        position: absolute;
+        z-index: 8;
+        left: max(7.5rem, clamp(32px, 5vw, 80px));
+        top: clamp(28px, 4vh, 54px);
+        font: 600 12px/1 var(--spree-sans);
+        letter-spacing: .16em;
+        text-transform: uppercase;
+        color: rgba(0,0,0,.52);
+      }
+      [data-spreeai-stat-number] {
+        font-family: var(--spree-serif) !important;
+        font-weight: 400 !important;
+        letter-spacing: -.025em !important;
+      }
+      [data-spreeai-problem] h2 {
+        font-family: var(--spree-serif) !important;
+        letter-spacing: -.025em !important;
+      }
+      [data-spreeai-product] [data-panel-inner] {
+        background:
+          radial-gradient(circle at 52% 45%, rgba(230,217,224,.82), transparent 34%),
+          linear-gradient(120deg, #f1eee9 0%, #e8ddd6 48%, #e9eef0 100%) !important;
+      }
+      [data-spreeai-product] [data-spreeai-output-visual] > div:first-child { opacity: .22; filter: saturate(.55); }
+      [data-spreeai-product] [data-spreeai-output-visual] > h2 {
+        left: 6% !important;
+        top: 29% !important;
+        width: 27% !important;
+        height: auto !important;
+        font-family: var(--spree-serif) !important;
+        font-size: clamp(40px, 4vw, 70px) !important;
+        line-height: 1.03 !important;
+        letter-spacing: -.025em !important;
+      }
+      [data-spreeai-product] [data-spreeai-output-visual] > p {
+        left: 73% !important;
+        top: 59% !important;
+        width: 20% !important;
+        font-size: clamp(16px, 1.34vw, 21px) !important;
+        line-height: 1.38 !important;
+      }
+      [data-spreeai-product] video[data-video-slot^="output-"] {
+        left: 50% !important;
+        top: 15.5% !important;
+        width: 38% !important;
+        height: calc(84.5% - 112px) !important;
+        border-radius: 20px !important;
+      }
+      [data-spreeai-product] [data-spreeai-product-card] { width: 11.5% !important; height: 24% !important; border-radius: 12px !important; }
+      [data-spreeai-product] [data-spreeai-product-card="top"] { left: 62.5% !important; top: 22% !important; }
+      [data-spreeai-product] [data-spreeai-product-card="bottom"] { left: 26% !important; top: 57% !important; }
+      [data-spreeai-auto-tabs] {
+        padding: 6px !important;
+        border-radius: 999px !important;
+        background: rgba(255,255,255,.56) !important;
+        border: 1px solid rgba(255,255,255,.52) !important;
+        box-shadow: 0 12px 40px rgba(26,21,18,.12) !important;
+        backdrop-filter: blur(22px) saturate(130%) !important;
+      }
+      [data-spreeai-auto-tabs] button { position: relative; overflow: hidden; }
+      [data-spreeai-auto-tabs] button[data-spreeai-auto-active="true"] {
+        background: rgba(255,255,255,.94) !important;
+        box-shadow: 0 5px 16px rgba(20,17,15,.12) !important;
+      }
+      [data-spreeai-auto-tabs] button[data-spreeai-auto-active="true"]::after {
+        content: "";
+        position: absolute;
+        left: 16%;
+        right: 16%;
+        bottom: 5px;
+        height: 1.5px;
+        border-radius: 2px;
+        background: #111;
+        transform-origin: left;
+        animation: spreeaiTabProgress var(--spreeai-cycle, 5s) linear both;
+      }
+      @keyframes spreeaiTabProgress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+      [data-spreeai-platform] [data-panel-inner] {
+        background:
+          radial-gradient(circle at 14% 20%, rgba(232,217,210,.9), transparent 36%),
+          radial-gradient(circle at 86% 78%, rgba(204,218,221,.8), transparent 36%),
+          #f4f1ed !important;
+      }
+      [data-spreeai-platform-header] {
+        position: relative;
+        padding-bottom: clamp(18px, 3vh, 36px);
+      }
+      [data-spreeai-platform-header]::after {
+        content: "ONE SYSTEM. EVERY DECISION.";
+        position: absolute;
+        top: -24px;
+        left: 16.666%;
+        font: 600 11px/1 var(--spree-sans);
+        letter-spacing: .15em;
+        color: rgba(0,0,0,.48);
+      }
+      [data-spreeai-platform-header] h2 { font-family: var(--spree-serif) !important; letter-spacing: -.025em !important; }
+      [data-spreeai-platform-grid] {
+        border: 0 !important;
+        gap: clamp(10px, 1vw, 18px) !important;
+      }
+      [data-spreeai-platform-card] {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(18,16,14,.09) !important;
+        border-radius: 18px;
+        background: rgba(255,255,255,.56);
+        box-shadow: 0 12px 36px rgba(43,35,30,.07);
+        transition: transform .55s var(--spree-ease), background .4s, box-shadow .4s;
+      }
+      [data-spreeai-platform-card]::after {
+        content: "";
+        position: absolute;
+        inset: auto -15% -55% 28%;
+        height: 70%;
+        border-radius: 50%;
+        background: rgba(219,201,192,.42);
+        filter: blur(30px);
+        opacity: 0;
+        transition: opacity .45s;
+      }
+      [data-spreeai-platform-card][data-active="true"] {
+        transform: translateY(-10px);
+        background: rgba(255,255,255,.88);
+        box-shadow: 0 24px 64px rgba(43,35,30,.13);
+      }
+      [data-spreeai-platform-card][data-active="true"]::after { opacity: 1; }
+      [data-spreeai-platform-card] > div:first-child {
+        font-family: var(--spree-serif) !important;
+        font-weight: 400 !important;
+      }
+      [data-spreeai-channels] [data-panel-inner] {
+        background:
+          radial-gradient(circle at 16% 72%, rgba(228,196,182,.85), transparent 38%),
+          radial-gradient(circle at 88% 18%, rgba(188,213,223,.7), transparent 36%),
+          #ece9e4 !important;
+      }
+      [data-spreeai-channels] [data-spreeai-shopper-visual] > div:first-child { opacity: .18; filter: saturate(.55); }
+      [data-spreeai-channels] [data-spreeai-shopper-visual] > h2 {
+        left: 5.5% !important;
+        top: 27% !important;
+        width: 24% !important;
+        height: auto !important;
+        font-family: var(--spree-serif) !important;
+        font-size: clamp(40px, 4vw, 68px) !important;
+        line-height: 1.04 !important;
+        letter-spacing: -.025em !important;
+      }
+      [data-spreeai-channels] [data-spreeai-shopper-visual] > p {
+        left: 73% !important;
+        top: 59% !important;
+        width: 21% !important;
+        font-size: clamp(16px, 1.34vw, 21px) !important;
+        line-height: 1.38 !important;
+      }
+      [data-spreeai-shopper-frame] {
+        left: 31% !important;
+        top: 14.5% !important;
+        bottom: 108px !important;
+        width: 38% !important;
+        border-radius: 20px !important;
+      }
+      [data-spreeai-timeline] [data-panel-inner] {
+        background:
+          radial-gradient(circle at 50% 26%, rgba(83,70,61,.48), transparent 38%),
+          #080808 !important;
+      }
+      [data-spreeai-timeline] [data-spreeai-section-label] { color: rgba(255,255,255,.58) !important; }
+      [data-spreeai-timeline] h2 {
+        max-width: 900px !important;
+        font-size: clamp(44px, 5.3vw, 88px) !important;
+        line-height: 1.02 !important;
+        letter-spacing: -.025em !important;
+      }
+      [data-spreeai-timeline-grid] {
+        border: 0 !important;
+        gap: clamp(10px, 1vw, 18px);
+        min-height: clamp(260px, 38vh, 420px) !important;
+      }
+      [data-spreeai-timeline-card] {
+        border: 1px solid rgba(255,255,255,.14) !important;
+        border-radius: 18px;
+        background: rgba(255,255,255,.045);
+        transition: transform .55s var(--spree-ease), background .4s, border-color .4s, box-shadow .4s;
+      }
+      [data-spreeai-timeline-card][data-active="true"] {
+        transform: translateY(-12px);
+        background: rgba(255,255,255,.105);
+        border-color: rgba(255,255,255,.52) !important;
+        box-shadow: 0 28px 70px rgba(0,0,0,.36);
+      }
+      [data-spreeai-timeline-card] > div:first-child > div:last-child {
+        font-family: var(--spree-serif) !important;
+        font-weight: 400 !important;
+        font-size: clamp(42px, 4vw, 64px) !important;
+      }
+      [data-spreeai-timeline-card] > div:last-child > div:first-child {
+        font-family: var(--spree-serif) !important;
+        font-size: clamp(22px, 1.8vw, 30px) !important;
+        line-height: 1.08 !important;
+      }
+      [data-spreeai-demo]::after {
+        content: "THE PLATFORM, IN MOTION";
+        position: absolute;
+        z-index: 3;
+        top: clamp(26px, 4vh, 52px);
+        left: max(7.5rem, clamp(32px, 5vw, 80px));
+        padding: 9px 13px;
+        border-radius: 999px;
+        background: rgba(255,255,255,.72);
+        backdrop-filter: blur(16px);
+        color: #111;
+        font: 600 11px/1 var(--spree-sans);
+        letter-spacing: .14em;
+      }
+      [data-spreeai-pilot-frame] {
+        width: calc(100% - clamp(80px, 12vw, 190px)) !important;
+        max-width: 1460px !important;
+        aspect-ratio: 16 / 7.2 !important;
+        max-height: 42vh !important;
+        border-radius: 22px !important;
+      }
+      [data-spreeai-pilot-frame] video { object-position: 50% 20% !important; }
+      footer[data-spreeai-footer] {
+        z-index: 12 !important;
+        padding: clamp(72px,8vw,120px) clamp(30px,7vw,110px) 42px !important;
+        gap: clamp(48px,6vw,84px) !important;
+      }
+      footer[data-spreeai-footer] img[alt="SPREEAI"] { filter: invert(1); opacity: .94; height: 24px !important; }
+      [data-spreeai-footer-main] {
+        display: grid !important;
+        grid-template-columns: minmax(180px,1.05fr) minmax(520px,2fr) !important;
+        align-items: start !important;
+        gap: clamp(48px,8vw,140px) !important;
+      }
+      [data-spreeai-footer-nav] {
+        display: grid !important;
+        grid-template-columns: repeat(3,minmax(0,1fr)) !important;
+        gap: 18px 42px !important;
+      }
+      [data-spreeai-footer-nav] a,
+      [data-spreeai-socials] a {
+        color: rgba(255,255,255,.74) !important;
+        font: 400 16px/1.2 var(--spree-sans) !important;
+        transition: color .2s, transform .2s;
+      }
+      [data-spreeai-footer-nav] a:hover,
+      [data-spreeai-socials] a:hover { color: #fff !important; transform: translateY(-2px); }
+      [data-spreeai-socials] {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 18px 30px;
+        width: 100%;
+        max-width: 1240px;
+        margin: 0 auto;
+        padding-top: 26px;
+        border-top: 1px solid rgba(255,255,255,.18);
+      }
+      [data-spreeai-social-label] {
+        color: #fff;
+        font: 500 13px/1 var(--spree-sans);
+        letter-spacing: .12em;
+        text-transform: uppercase;
+      }
+      [data-spreeai-social-links] { display:flex; flex-wrap:wrap; gap:clamp(22px,4vw,54px); }
+      [data-spreeai-pilot-cta] {
+        position: relative;
+        overflow: hidden;
+        background-image: linear-gradient(110deg,#050505 0%,#050505 42%,#383838 49%,#050505 56%,#050505 100%) !important;
+        background-size: 260% 100% !important;
+        animation: spreeaiPilotGlow 6s ease-in-out infinite !important;
+      }
+      @keyframes spreeaiPilotGlow {
+        0%, 68%, 100% { background-position: 100% 0; box-shadow: 0 0 0 rgba(0,0,0,0); transform: translateZ(0) scale(1); }
+        78% { background-position: 0 0; box-shadow: 0 0 0 6px rgba(0,0,0,.08), 0 9px 28px rgba(0,0,0,.24); transform: translateZ(0) scale(1.035); }
+        88% { background-position: 0 0; box-shadow: 0 0 0 rgba(0,0,0,0); transform: translateZ(0) scale(1); }
       }
       [data-spreeai-scroll-cue] {
         position: fixed;
@@ -238,10 +592,37 @@
       @media (prefers-reduced-motion: reduce) {
         [data-spreeai-scroll-dot] { animation: none; }
         [data-spreeai-output-visual], [data-spreeai-shopper-visual] { transition: opacity .2s ease !important; }
+        [data-spreeai-loader-mark], [data-spreeai-loader-line]::after,
+        [data-spreeai-product-card], [data-spreeai-pilot-cta],
+        [data-spreeai-auto-tabs] button[data-spreeai-auto-active="true"]::after { animation: none !important; }
+      }
+      @media (max-width: 980px) {
+        [data-spreeai-product] video[data-video-slot^="output-"] { width: 46% !important; }
+        [data-spreeai-product] [data-spreeai-output-visual] > h2,
+        [data-spreeai-channels] [data-spreeai-shopper-visual] > h2 { left: 4% !important; width: 27% !important; font-size: clamp(34px,5vw,54px) !important; }
+        [data-spreeai-product] [data-spreeai-output-visual] > p,
+        [data-spreeai-channels] [data-spreeai-shopper-visual] > p { left: 76% !important; width: 20% !important; }
+        [data-spreeai-shopper-frame] { left: 28% !important; width: 44% !important; }
+        [data-spreeai-footer-main] { grid-template-columns: 1fr !important; }
       }
       @media (max-width: 720px) {
         [data-spreeai-scroll-cue] { right: 10px; }
         [data-spreeai-scroll-cue] > span:first-child { display: none; }
+        [data-spreeai-section-label] { left: 24px; }
+        [data-spreeai-product] video[data-video-slot^="output-"], [data-spreeai-shopper-frame] {
+          left: 50% !important; top: 19% !important; width: 76% !important; height: 49% !important; bottom: auto !important;
+        }
+        [data-spreeai-product] [data-spreeai-output-visual] > h2,
+        [data-spreeai-channels] [data-spreeai-shopper-visual] > h2 { left: 8% !important; top: 70% !important; width: 84% !important; font-size: 34px !important; }
+        [data-spreeai-product] [data-spreeai-output-visual] > p,
+        [data-spreeai-channels] [data-spreeai-shopper-visual] > p { display:none; }
+        [data-spreeai-product-card] { display:none !important; }
+        [data-spreeai-platform-grid], [data-spreeai-timeline-grid] { grid-template-columns: repeat(2,minmax(0,1fr)) !important; }
+        [data-spreeai-platform-card], [data-spreeai-timeline-card] { min-height: 150px !important; padding: 18px !important; }
+        [data-spreeai-footer-nav] { grid-template-columns: repeat(2,minmax(0,1fr)) !important; }
+        [data-spreeai-socials] { align-items:flex-start; }
+        [data-spreeai-social-links] { width:100%; justify-content:space-between; }
+        [data-spreeai-pilot-frame] { width: calc(100% - 40px) !important; aspect-ratio: 16/8 !important; }
       }
     `;
     document.head.appendChild(style);
@@ -257,10 +638,10 @@
 
     const video = document.createElement("video");
     video.dataset.videoSlot = "pilot";
-    video.setAttribute("aria-label", "SPREEAI garment detail in motion");
+    video.setAttribute("aria-label", "SPREEAI model styling experience in motion");
     video.style.cssText = "display:block;width:100%;height:100%;object-fit:cover;object-position:center";
     slot.replaceWith(video);
-    replaceVideo(video, assets.demo);
+    replaceVideo(video, assets.pilot);
 
     artwork.style.width = "min(900px,72%)";
     artwork.style.aspectRatio = "16 / 7";
@@ -270,6 +651,7 @@
     artwork.style.boxShadow = "var(--spree-shadow)";
     artwork.style.outline = "1px solid rgba(17,17,17,.06)";
     artwork.dataset.spreeaiModelFrame = "pilot";
+    artwork.dataset.spreeaiPilotFrame = "true";
 
     const pilotObserver = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
@@ -285,8 +667,8 @@
 
     inner.dataset.spreeaiPilotRefined = "true";
     inner.style.justifyContent = "center";
-    inner.style.gap = "clamp(14px,2.2vh,22px)";
-    inner.style.padding = "clamp(34px,5vh,60px) max(7.5rem,clamp(32px,5vw,80px)) 126px";
+    inner.style.gap = "clamp(10px,1.6vh,18px)";
+    inner.style.padding = "clamp(24px,3.5vh,44px) max(7.5rem,clamp(32px,5vw,80px)) 112px";
     inner.style.background = "radial-gradient(circle at 50% 34%, rgba(238,231,226,.7), rgba(255,255,255,0) 42%), #fff";
     const content = artwork.nextElementSibling;
     if (content) {
@@ -309,7 +691,7 @@
       const heading = content.querySelector("h2");
       if (heading) {
         heading.style.maxWidth = "860px";
-        heading.style.fontSize = "clamp(32px,3.5vw,52px)";
+        heading.style.fontSize = "clamp(30px,3.15vw,48px)";
         heading.style.lineHeight = "1.04";
       }
       const paragraph = content.querySelector("p");
@@ -325,20 +707,20 @@
   }
 
   function polishModelPanels() {
-    const outputImages = Array.from(document.querySelectorAll('img[style*="top: 19%"]'));
-    outputImages.forEach(function (image) {
-      const visual = image.parentElement;
+    const outputVideos = Array.from(document.querySelectorAll('video[data-video-slot^="output-"]'));
+    outputVideos.forEach(function (video) {
+      const visual = video.parentElement;
       if (visual) visual.dataset.spreeaiOutputVisual = "true";
-      image.dataset.spreeaiModelFrame = "output";
-      image.style.borderRadius = "12px";
-      image.style.boxShadow = "var(--spree-shadow)";
-      image.style.outline = "1px solid rgba(255,255,255,.46)";
+      video.dataset.spreeaiModelFrame = "output";
     });
 
     document.querySelectorAll('video[data-video-slot^="shopper-"]').forEach(function (video) {
       const frame = video.parentElement;
       const visual = frame && frame.parentElement;
-      if (frame) frame.dataset.spreeaiModelFrame = "shopper";
+      if (frame) {
+        frame.dataset.spreeaiModelFrame = "shopper";
+        frame.dataset.spreeaiShopperFrame = "true";
+      }
       if (visual) visual.dataset.spreeaiShopperVisual = "true";
     });
 
@@ -382,6 +764,270 @@
     window.addEventListener("scroll", update, { passive: true });
     update();
     document.body.appendChild(cue);
+  }
+
+  function addBrandLoader() {
+    if (document.querySelector("[data-spreeai-loader]")) return;
+    const mark = document.querySelector("nav img[alt='SPREEAI']") || document.querySelector("footer img[alt='SPREEAI']");
+    const loader = document.createElement("div");
+    loader.dataset.spreeaiLoader = "true";
+    loader.setAttribute("role", "status");
+    loader.setAttribute("aria-label", "Loading SPREEAI");
+    const loaderMark = document.createElement("div");
+    loaderMark.dataset.spreeaiLoaderMark = "true";
+    if (mark) {
+      const logo = mark.cloneNode(true);
+      logo.removeAttribute("style");
+      logo.alt = "SPREEAI";
+      loaderMark.appendChild(logo);
+    } else {
+      const wordmark = document.createElement("span");
+      wordmark.textContent = "SPREEAI";
+      wordmark.style.cssText = "font:400 clamp(46px,7vw,82px)/1 var(--spree-serif);letter-spacing:-.04em";
+      loaderMark.appendChild(wordmark);
+    }
+    const line = document.createElement("span");
+    line.dataset.spreeaiLoaderLine = "true";
+    loaderMark.appendChild(line);
+    loader.appendChild(loaderMark);
+    document.documentElement.dataset.spreeaiLoading = "true";
+    document.body.appendChild(loader);
+    const finish = function () {
+      loader.dataset.exit = "true";
+      document.documentElement.dataset.spreeaiLoading = "false";
+      setTimeout(function () { loader.remove(); }, 820);
+    };
+    setTimeout(finish, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 350 : 1550);
+  }
+
+  function panelMap() {
+    const panels = {};
+    document.querySelectorAll("[data-panel]").forEach(function (panel) {
+      panels[panel.dataset.screenLabel] = panel;
+    });
+    return panels;
+  }
+
+  function addSectionLabel(panel, label) {
+    if (!panel || panel.querySelector("[data-spreeai-section-label]")) return;
+    const item = document.createElement("div");
+    item.dataset.spreeaiSectionLabel = "true";
+    item.textContent = label;
+    panel.firstElementChild.appendChild(item);
+  }
+
+  function setupCleanPanelTransitions() {
+    const panels = Array.from(document.querySelectorAll("[data-panel]"));
+    panels.forEach(function (panel, index) {
+      panel.style.zIndex = String(2 + index);
+      if (index === 0) {
+        const heroInner = panel.firstElementChild;
+        if (heroInner) heroInner.style.animationName = "none";
+        return;
+      }
+      const inner = panel.firstElementChild;
+      if (!inner) return;
+      inner.style.animationName = "none";
+      inner.style.backgroundColor = index === 5 ? "#080808" : "#fff";
+      inner.dataset.spreeaiStageContent = "true";
+      inner.dataset.visible = "false";
+      Array.from(inner.children).forEach(function (child) {
+        child.dataset.spreeaiPanelChild = "true";
+      });
+    });
+
+    let queued = false;
+    const update = function () {
+      queued = false;
+      const threshold = Math.max(10, window.innerHeight * .035);
+      panels.slice(1).forEach(function (panel) {
+        const visible = panel.getBoundingClientRect().top <= threshold;
+        panel.firstElementChild.dataset.visible = visible ? "true" : "false";
+      });
+    };
+    const schedule = function () {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(update);
+    };
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    update();
+  }
+
+  function setupAutoCycle(panel, buttons, interval) {
+    if (!panel || !buttons.length || panel.dataset.spreeaiAutoCycle) return;
+    panel.dataset.spreeaiAutoCycle = "true";
+    const controls = buttons[0].parentElement;
+    if (controls) {
+      controls.dataset.spreeaiAutoTabs = "true";
+      controls.style.setProperty("--spreeai-cycle", interval + "ms");
+    }
+    let index = Math.max(0, buttons.findIndex(function (button) {
+      const bg = getComputedStyle(button).backgroundColor;
+      return bg !== "rgba(0, 0, 0, 0)" && bg !== "transparent";
+    }));
+    let timer = null;
+    let active = false;
+    const setActive = function (nextIndex, shouldClick) {
+      index = nextIndex;
+      buttons.forEach(function (button, buttonIndex) {
+        button.dataset.spreeaiAutoActive = buttonIndex === index ? "true" : "false";
+      });
+      if (shouldClick) buttons[index].click();
+      panel.querySelectorAll("video").forEach(function (video) {
+        const visual = video.closest("[data-spreeai-output-visual],[data-spreeai-shopper-visual]");
+        if (!visual || getComputedStyle(visual).visibility !== "hidden") {
+          const play = video.play();
+          if (play && typeof play.catch === "function") play.catch(function () {});
+        } else {
+          video.pause();
+        }
+      });
+    };
+    const start = function () {
+      if (timer || !active || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      timer = setInterval(function () { setActive((index + 1) % buttons.length, true); }, interval);
+    };
+    const stop = function () { if (timer) clearInterval(timer); timer = null; };
+    buttons.forEach(function (button, buttonIndex) {
+      button.addEventListener("click", function () {
+        setActive(buttonIndex, false);
+        stop();
+        start();
+      });
+    });
+    const observer = new IntersectionObserver(function (entries) {
+      active = entries[0].isIntersecting;
+      if (active) {
+        setActive(index, false);
+        start();
+      } else {
+        stop();
+        panel.querySelectorAll("video").forEach(function (video) { video.pause(); });
+      }
+    }, { threshold: .55 });
+    observer.observe(panel);
+    setActive(index, false);
+  }
+
+  function redesignCorePanels() {
+    const panels = panelMap();
+    const problem = panels["02 Problem"];
+    const product = panels["03 One input"];
+    const platform = panels["04 Why SPREEAI"];
+    const channels = panels["05 Shopper types"];
+    const timeline = panels["06 Pilot timeline"];
+    const demo = panels["07 Live demo"];
+
+    if (problem) {
+      problem.dataset.spreeaiProblem = "true";
+      const statWords = Array.from(problem.querySelectorAll("div,span")).filter(function (element) {
+        return ["ONE", "THREE", "EVERY"].indexOf(element.textContent.trim()) >= 0 && element.children.length === 0;
+      });
+      statWords.forEach(function (word) { word.dataset.spreeaiStatNumber = "true"; });
+    }
+    if (product) {
+      product.dataset.spreeaiProduct = "true";
+      addSectionLabel(product, "The intelligence layer for fashion commerce");
+      setupAutoCycle(product, Array.from(product.querySelectorAll("button")), 5200);
+    }
+    if (platform) {
+      platform.dataset.spreeaiPlatform = "true";
+      const inner = platform.firstElementChild;
+      const header = inner && inner.children[0];
+      const grid = inner && inner.children[1];
+      if (header) header.dataset.spreeaiPlatformHeader = "true";
+      if (grid) {
+        grid.dataset.spreeaiPlatformGrid = "true";
+        Array.from(grid.children).forEach(function (card) { card.dataset.spreeaiPlatformCard = "true"; });
+      }
+    }
+    if (channels) {
+      channels.dataset.spreeaiChannels = "true";
+      addSectionLabel(channels, "One platform. Every shopping moment.");
+      setupAutoCycle(channels, Array.from(channels.querySelectorAll("button")), 5600);
+    }
+    if (timeline) {
+      timeline.dataset.spreeaiTimeline = "true";
+      addSectionLabel(timeline, "From proof to scale");
+      const grid = timeline.firstElementChild && timeline.firstElementChild.children[1];
+      if (grid) {
+        grid.dataset.spreeaiTimelineGrid = "true";
+        Array.from(grid.children).forEach(function (card) { card.dataset.spreeaiTimelineCard = "true"; });
+      }
+    }
+    if (demo) demo.dataset.spreeaiDemo = "true";
+  }
+
+  function setupCardSpotlights() {
+    ["[data-spreeai-platform-grid]", "[data-spreeai-timeline-grid]"].forEach(function (selector, groupIndex) {
+      const grid = document.querySelector(selector);
+      if (!grid || grid.dataset.spreeaiSpotlight) return;
+      grid.dataset.spreeaiSpotlight = "true";
+      const cards = Array.from(grid.children);
+      let index = 0;
+      let timer = null;
+      const update = function () { cards.forEach(function (card, cardIndex) { card.dataset.active = cardIndex === index ? "true" : "false"; }); };
+      update();
+      const observer = new IntersectionObserver(function (entries) {
+        if (!entries[0].isIntersecting || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          if (timer) clearInterval(timer);
+          timer = null;
+          return;
+        }
+        if (timer) return;
+        timer = setInterval(function () { index = (index + 1) % cards.length; update(); }, groupIndex ? 1800 : 2200);
+      }, { threshold: .45 });
+      observer.observe(grid);
+    });
+  }
+
+  function enhanceFooterAndNav() {
+    const footer = document.querySelector("footer");
+    if (footer && !footer.dataset.spreeaiFooter) {
+      footer.dataset.spreeaiFooter = "true";
+      const main = footer.children[0];
+      if (main) {
+        main.dataset.spreeaiFooterMain = "true";
+        const columns = main.children[1];
+        if (columns) {
+          const links = Array.from(columns.querySelectorAll("a"));
+          columns.innerHTML = "";
+          columns.dataset.spreeaiFooterNav = "true";
+          links.forEach(function (link) { columns.appendChild(link); });
+        }
+      }
+      const socials = document.createElement("div");
+      socials.dataset.spreeaiSocials = "true";
+      const socialLabel = document.createElement("span");
+      socialLabel.dataset.spreeaiSocialLabel = "true";
+      socialLabel.textContent = "Follow SPREEAI";
+      const socialLinks = document.createElement("div");
+      socialLinks.dataset.spreeaiSocialLinks = "true";
+      [
+        ["Threads", "https://www.threads.com/@spreeai?igshid=NTc4MTIwNjQ2YQ=="],
+        ["LinkedIn", "https://www.linkedin.com/company/spreeai"],
+        ["Instagram", "https://www.instagram.com/spreeai/"],
+        ["X", "https://twitter.com/spreeai"],
+        ["YouTube", "https://www.youtube.com/channel/UCwqmYq9Cp-JE4iOU-LtRTPg"]
+      ].forEach(function (item) {
+        const link = document.createElement("a");
+        link.textContent = item[0];
+        link.href = item[1];
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        socialLinks.appendChild(link);
+      });
+      socials.appendChild(socialLabel);
+      socials.appendChild(socialLinks);
+      footer.insertBefore(socials, footer.lastElementChild);
+    }
+    const nav = document.querySelector("nav");
+    if (nav) {
+      const cta = Array.from(nav.querySelectorAll("a")).find(function (link) { return link.textContent.trim() === "Start your pilot"; });
+      if (cta) cta.dataset.spreeaiPilotCta = "true";
+    }
   }
 
   function replaceExactText(root, replacements) {
@@ -520,10 +1166,15 @@
 
   function applyPolish() {
     injectPolishStyles();
+    addBrandLoader();
     replacePilotArtwork();
-    polishModelPanels();
-    addScrollCue();
     applyPlatformCopy();
+    polishModelPanels();
+    redesignCorePanels();
+    setupCleanPanelTransitions();
+    setupCardSpotlights();
+    enhanceFooterAndNav();
+    addScrollCue();
   }
 
   function applyReplacements() {
