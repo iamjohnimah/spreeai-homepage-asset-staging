@@ -1,18 +1,24 @@
 (function () {
   const assets = {
     hero: {
-      video: "A01_Nyah_Hero_Seedance25.mp4",
-      poster: "A01_Nyah_Hero_FIGMA.jpg"
+      video: "A01_Editorial_Transform_Hero.mp4",
+      poster: "A01_Editorial_Transform_Hero_Poster.jpg",
+      mobileVideo: "A01_Editorial_Transform_Hero_Mobile.mp4",
+      mobilePoster: "A01_Editorial_Transform_Hero_Mobile_Poster.jpg",
+      position: "50% 50%"
     },
     outputs: [
-      { slot: "tryon", video: "A02_Adriana_TryOn_Seedance25.mp4", poster: "A02_Adriana_TryOn_FIGMA.jpg", position: "50% 50%" },
-      { slot: "fit", video: "A03_Yuna_SizeFit_Seedance25.mp4", poster: "A03_Yuna_SizeFit_FIGMA.jpg", position: "50% 50%" },
-      { slot: "styling", video: "A04_Yuna_Styling_Seedance25.mp4", poster: "A04_Yuna_Styling_FIGMA.jpg", position: "50% 50%" }
+      { slot: "tryon", video: "A01_Editorial_Transform_Hero.mp4", poster: "A01_Editorial_Transform_Hero_Poster.jpg", position: "50% 50%" },
+      { slot: "fit", video: "A06_Malik_InStore_Seedance25.mp4", poster: "A06_Malik_InStore_FIGMA.jpg", position: "50% 50%" },
+      { slot: "styling", video: "A04_Male_SmartStyling.mp4", poster: "A04_Male_SmartStyling_Poster.jpg", position: "50% 50%" }
     ],
-    outputProducts: {
-      top: "Yuna_Jacket.png",
-      bottom: "Yuna_Trousers.png"
-    },
+    vtoLooks: [
+      { top: "VTO_Look_01_Top.jpg", bottom: "VTO_Look_01_Bottom.jpg", topName: "Metallic blazer", bottomName: "Wide-leg trouser" },
+      { top: "VTO_Look_02_Top.jpg", bottom: "VTO_Look_02_Bottom.jpg", topName: "Iridescent column", bottomName: "Floor-length hem" },
+      { top: "VTO_Look_03_Top.jpg", bottom: "VTO_Look_03_Bottom.jpg", topName: "Tuxedo jacket", bottomName: "Tailored trouser" },
+      { top: "VTO_Look_04_Top.jpg", bottom: "VTO_Look_04_Bottom.jpg", topName: "Sculpted shell", bottomName: "Ivory trouser" },
+      { top: "VTO_Look_05_Top.jpg", bottom: "VTO_Look_05_Bottom.jpg", topName: "Cropped knit", bottomName: "Column skirt" }
+    ],
     channels: {
       "shopper-online": {
         video: "A05_Esme_Online_Seedance25.mp4",
@@ -31,8 +37,8 @@
       }
     },
     demo: {
-      video: "A02_Adriana_TryOn_Seedance25.mp4",
-      poster: "A02_Adriana_TryOn_FIGMA.jpg",
+      video: "A06_Malik_InStore_Seedance25.mp4",
+      poster: "A06_Malik_InStore_FIGMA.jpg",
       position: "50% 50%"
     },
     pilot: {
@@ -47,8 +53,9 @@
   function replaceVideo(video, config) {
     if (!video || video.dataset.spreeaiReplaced) return;
     video.dataset.spreeaiReplaced = "true";
-    video.src = config.video;
-    video.poster = config.poster;
+    const useMobile = Boolean(config.mobileVideo && window.matchMedia("(max-width: 720px)").matches);
+    video.src = useMobile ? config.mobileVideo : config.video;
+    video.poster = useMobile ? (config.mobilePoster || config.poster) : config.poster;
     video.muted = true;
     video.loop = true;
     video.playsInline = true;
@@ -81,21 +88,82 @@
     ].join(";");
 
     const productFrame = document.createElement("div");
-    productFrame.style.cssText = "position:relative;width:100%;height:80%;overflow:hidden;background:#fff";
+    productFrame.style.cssText = "position:relative;width:100%;height:74%;overflow:hidden;background:#fff";
 
     const product = document.createElement("img");
+    product.dataset.spreeaiProductImage = config.slot;
     product.src = config.image;
-    product.alt = "";
-    product.style.cssText = "position:absolute;width:145%;height:145%;max-width:none;object-fit:cover;left:" + config.productLeft + ";top:" + config.productTop + ";transform:translate(-50%,-50%)";
+    product.alt = config.name || config.label;
+    product.style.cssText = "position:absolute;width:100%;height:100%;max-width:none;object-fit:cover;left:0;top:0";
 
     const label = document.createElement("span");
-    label.textContent = config.label;
-    label.style.cssText = "height:20%;display:flex;align-items:center;justify-content:center;background:#f4f4f4;color:#111;font:400 clamp(10px,.9vw,14px)/1 Afacad,sans-serif";
+    label.dataset.spreeaiProductLabel = config.slot;
+    label.style.cssText = "height:26%;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:1px;padding:0 10px;background:#f7f6f4;color:#111;font-family:Afacad,sans-serif";
+    const labelType = document.createElement("small");
+    labelType.textContent = config.label;
+    labelType.style.cssText = "font:600 clamp(8px,.66vw,10px)/1 Afacad,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:rgba(17,17,17,.48)";
+    const labelName = document.createElement("strong");
+    labelName.dataset.spreeaiProductName = config.slot;
+    labelName.textContent = config.name;
+    labelName.style.cssText = "font:500 clamp(9px,.78vw,12px)/1.15 Afacad,sans-serif;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis";
+    label.appendChild(labelType);
+    label.appendChild(labelName);
 
     productFrame.appendChild(product);
     card.appendChild(productFrame);
     card.appendChild(label);
     parent.appendChild(card);
+  }
+
+  function setupVtoLookSync(video, parent) {
+    if (!video || video.dataset.spreeaiLookSync) return;
+    video.dataset.spreeaiLookSync = "true";
+    const update = function () {
+      const time = video.currentTime || 0;
+      const lookIndex = time < 1.75 ? 0 : time < 3.45 ? 1 : time < 5 ? 2 : time < 6.8 ? 3 : 4;
+      if (video.dataset.spreeaiLookIndex === String(lookIndex)) return;
+      video.dataset.spreeaiLookIndex = String(lookIndex);
+      const look = assets.vtoLooks[lookIndex];
+      ["top", "bottom"].forEach(function (slot) {
+        const image = parent.querySelector('[data-spreeai-product-image="' + slot + '"]');
+        const name = parent.querySelector('[data-spreeai-product-name="' + slot + '"]');
+        if (image) image.src = look[slot];
+        if (name) name.textContent = look[slot + "Name"];
+      });
+      parent.querySelectorAll("[data-spreeai-product-card]").forEach(function (card) {
+        card.animate([
+          { opacity: .72, transform: "translateY(4px) scale(.985)" },
+          { opacity: 1, transform: "translateY(0) scale(1)" }
+        ], { duration: 360, easing: "cubic-bezier(.22,1,.36,1)" });
+      });
+    };
+    video.addEventListener("timeupdate", update);
+    video.addEventListener("seeked", update);
+    update();
+  }
+
+  function addFitIntelligenceUi(parent) {
+    if (!parent || parent.querySelector('[data-spreeai-feature-ui="fit"]')) return;
+    const ui = document.createElement("div");
+    ui.dataset.spreeaiFeatureUi = "fit";
+    ui.setAttribute("aria-label", "Fit recommendation: Medium, true to size");
+    ui.innerHTML = '<span data-spreeai-ui-kicker>FIT INTELLIGENCE</span><strong>Medium</strong><span data-spreeai-fit-confidence><b>94%</b> fit confidence</span><div data-spreeai-size-row><span>XS</span><span>S</span><span data-recommended>M</span><span>L</span><span>XL</span></div><p>True to size<br><em>Relaxed through the chest</em></p>';
+    parent.appendChild(ui);
+  }
+
+  function addStylingUi(parent) {
+    if (!parent || parent.querySelector('[data-spreeai-feature-ui="styling"]')) return;
+    const ui = document.createElement("div");
+    ui.dataset.spreeaiFeatureUi = "styling";
+    ui.setAttribute("aria-label", "Smart styling builds complete looks with layers and accessories");
+    ui.innerHTML = '<span data-spreeai-ui-kicker>SMART STYLING</span><strong>Complete the look</strong><div data-spreeai-style-chips><span>Layer</span><span>Bag</span><span>Shoes</span></div><p>Live catalog · Look <b>01</b></p>';
+    parent.appendChild(ui);
+    const look = ui.querySelector("p b");
+    let index = 1;
+    setInterval(function () {
+      index = index % 3 + 1;
+      if (look) look.textContent = "0" + index;
+    }, 4000);
   }
 
   function replaceOutputImage(image, config) {
@@ -113,24 +181,30 @@
     image.style.pointerEvents = "none";
     replaceVideo(video, config);
 
-    addOutputProductCard(parent, {
-      slot: "top",
-      image: assets.outputProducts.top,
-      label: "Top",
-      left: "61%",
-      top: "23%",
-      productLeft: "50%",
-      productTop: "46%"
-    });
-    addOutputProductCard(parent, {
-      slot: "bottom",
-      image: assets.outputProducts.bottom,
-      label: "Bottom",
-      left: "29%",
-      top: "54%",
-      productLeft: "86%",
-      productTop: "50%"
-    });
+    if (config.slot === "tryon") {
+      const firstLook = assets.vtoLooks[0];
+      addOutputProductCard(parent, {
+        slot: "top",
+        image: firstLook.top,
+        name: firstLook.topName,
+        label: "Top",
+        left: "61%",
+        top: "23%"
+      });
+      addOutputProductCard(parent, {
+        slot: "bottom",
+        image: firstLook.bottom,
+        name: firstLook.bottomName,
+        label: "Bottom",
+        left: "29%",
+        top: "54%"
+      });
+      setupVtoLookSync(video, parent);
+    } else if (config.slot === "fit") {
+      addFitIntelligenceUi(parent);
+    } else if (config.slot === "styling") {
+      addStylingUi(parent);
+    }
   }
 
   function removeLegacyChannelOverlay(video) {
@@ -144,12 +218,14 @@
     style.id = "spreeai-polish-styles";
     style.textContent = `
       :root {
-        --spree-serif: "Big Caslon", "Big Caslon Medium", Baskerville, "Times New Roman", serif;
+        --spree-serif: Didot, "Bodoni 72", "Big Caslon", Baskerville, "Times New Roman", serif;
         --spree-sans: Afacad, system-ui, sans-serif;
-        --spree-shadow: 0 18px 50px rgba(22, 19, 16, .14), 0 2px 8px rgba(22, 19, 16, .08);
-        --spree-card-radius: 20px;
+        --spree-shadow: 0 28px 72px rgba(22, 19, 16, .16), 0 3px 12px rgba(22, 19, 16, .08);
+        --spree-card-radius: 24px;
         --spree-ease: cubic-bezier(.22, 1, .36, 1);
-        --spree-accent: #ad9986;
+        --spree-accent: #b8a18b;
+        --spree-ink: #11100f;
+        --spree-cream: #f4f0eb;
       }
       body,
       [data-panel] { font-family: var(--spree-sans) !important; }
@@ -159,7 +235,14 @@
         scroll-behavior: smooth !important;
         overscroll-behavior-y: auto !important;
       }
-      body { display: block !important; min-height: 100% !important; }
+      body {
+        display: block !important;
+        min-height: 100% !important;
+        background: var(--spree-cream) !important;
+        color: var(--spree-ink) !important;
+        font-synthesis: none;
+        text-rendering: optimizeLegibility;
+      }
       [data-panel] {
         position: relative !important;
         top: auto !important;
@@ -186,10 +269,41 @@
       [data-panel] { scroll-snap-align: none !important; }
       [data-panel] h1,
       [data-panel] h2,
-      [data-panel] h3 { font-family: var(--spree-serif) !important; }
+      [data-panel] h3 {
+        font-family: var(--spree-serif) !important;
+        font-weight: 400 !important;
+        letter-spacing: -.035em !important;
+        text-wrap: balance;
+      }
       [data-panel] p,
       [data-panel] button,
       [data-panel] a { font-family: var(--spree-sans) !important; }
+      [data-panel] p {
+        font-weight: 400 !important;
+        letter-spacing: -.012em !important;
+        line-height: 1.45 !important;
+        text-wrap: pretty;
+      }
+      [data-screen-label="01 Hero"] > [data-panel-inner] {
+        background: #bbb2a8 !important;
+      }
+      [data-screen-label="01 Hero"] video {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        object-position: 50% 50% !important;
+      }
+      [data-screen-label="01 Hero"] [data-dc-tpl="17"] {
+        max-width: min(720px, 58vw) !important;
+        padding: clamp(22px, 3vw, 42px) !important;
+        border: 1px solid rgba(255,255,255,.28);
+        border-radius: 22px;
+        background: rgba(16,14,13,.28);
+        box-shadow: 0 24px 80px rgba(0,0,0,.16);
+        backdrop-filter: blur(18px) saturate(112%);
+      }
+      [data-screen-label="01 Hero"] h1,
+      [data-screen-label="01 Hero"] p { color: #fff !important; text-shadow: 0 2px 18px rgba(0,0,0,.24); }
       nav,
       footer,
       nav a,
@@ -239,6 +353,67 @@
       @keyframes spreeaiProductFloat {
         0%, 100% { transform: translateY(0); }
         50% { transform: translateY(-8px); }
+      }
+      [data-spreeai-feature-ui] {
+        position: absolute;
+        z-index: 6;
+        width: clamp(190px, 17.5vw, 270px);
+        padding: clamp(15px, 1.4vw, 22px);
+        border: 1px solid rgba(255,255,255,.62);
+        border-radius: 18px;
+        color: #171513;
+        background: rgba(255,255,255,.82);
+        box-shadow: 0 22px 60px rgba(28,23,20,.2);
+        backdrop-filter: blur(24px) saturate(130%);
+        font-family: var(--spree-sans);
+        pointer-events: none;
+      }
+      [data-spreeai-feature-ui="fit"] { left: 57%; top: 25%; }
+      [data-spreeai-feature-ui="styling"] { left: 26%; top: 53%; }
+      [data-spreeai-ui-kicker] {
+        display: block;
+        margin-bottom: 9px;
+        font: 600 10px/1 var(--spree-sans);
+        letter-spacing: .14em;
+        color: rgba(17,15,13,.52);
+      }
+      [data-spreeai-feature-ui] > strong {
+        display: block;
+        font: 400 clamp(25px,2vw,34px)/1 var(--spree-serif);
+        letter-spacing: -.025em;
+      }
+      [data-spreeai-fit-confidence] {
+        display: block;
+        margin-top: 5px;
+        font-size: 12px;
+        color: rgba(17,15,13,.58);
+      }
+      [data-spreeai-fit-confidence] b { color: #111; font-weight: 600; }
+      [data-spreeai-size-row] { display:grid; grid-template-columns:repeat(5,1fr); gap:5px; margin:15px 0 13px; }
+      [data-spreeai-size-row] span {
+        display:grid;
+        place-items:center;
+        aspect-ratio:1;
+        border:1px solid rgba(17,15,13,.14);
+        border-radius:50%;
+        font:500 11px/1 var(--spree-sans);
+        background:rgba(255,255,255,.56);
+      }
+      [data-spreeai-size-row] [data-recommended] {
+        color:#fff;
+        border-color:#111;
+        background:#111;
+        box-shadow:0 0 0 4px rgba(184,161,139,.22);
+      }
+      [data-spreeai-feature-ui] p { margin:0; font-size:12px !important; line-height:1.28 !important; }
+      [data-spreeai-feature-ui] p em { color:rgba(17,15,13,.56); font-style:normal; }
+      [data-spreeai-style-chips] { display:flex; flex-wrap:wrap; gap:6px; margin:15px 0 13px; }
+      [data-spreeai-style-chips] span {
+        padding:7px 10px;
+        border:1px solid rgba(17,15,13,.14);
+        border-radius:999px;
+        background:rgba(255,255,255,.64);
+        font:500 11px/1 var(--spree-sans);
       }
       [data-spreeai-loader] {
         position: fixed;
@@ -502,6 +677,7 @@
         font-size: clamp(22px, 1.8vw, 30px) !important;
         line-height: 1.08 !important;
       }
+      [data-spreeai-mobile-timeline] { display:none; }
       [data-spreeai-pilot-frame] {
         width: calc(100% - clamp(80px, 12vw, 190px)) !important;
         max-width: 1460px !important;
@@ -602,14 +778,55 @@
       [data-spreeai-pilot-cta] {
         position: relative;
         overflow: hidden;
-        background-image: linear-gradient(110deg,#050505 0%,#050505 42%,#383838 49%,#050505 56%,#050505 100%) !important;
-        background-size: 260% 100% !important;
-        animation: spreeaiPilotGlow 4.2s ease-in-out infinite !important;
+        isolation: isolate;
+        color: #fff !important;
+        border: 1px solid rgba(255,255,255,.08) !important;
+        background: linear-gradient(135deg,#050505,#24201d) !important;
+        box-shadow: 0 10px 28px rgba(0,0,0,.24) !important;
+        transform-origin: center;
+        animation: spreeaiPilotPulse 5.8s var(--spree-ease) infinite !important;
       }
-      @keyframes spreeaiPilotGlow {
-        0%, 55%, 100% { background-position: 100% 0; box-shadow: 0 0 0 rgba(0,0,0,0), 0 10px 32px rgba(0,0,0,.18); }
-        72% { background-position: 0 0; box-shadow: 0 0 0 6px rgba(173,153,134,.14), 0 12px 34px rgba(0,0,0,.28); }
-        86% { background-position: 0 0; box-shadow: 0 0 0 rgba(0,0,0,0), 0 10px 32px rgba(0,0,0,.18); }
+      [data-spreeai-pilot-cta]::before {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        top: -120%;
+        bottom: -120%;
+        left: -55%;
+        width: 42%;
+        background: linear-gradient(90deg,transparent,rgba(255,255,255,.6),transparent);
+        transform: rotate(18deg) translateX(-120%);
+        animation: spreeaiPilotShine 5.8s ease-in-out infinite;
+      }
+      [data-spreeai-pilot-cta]::after {
+        content: "";
+        position: absolute;
+        inset: -1px;
+        z-index: -2;
+        border: 1px solid rgba(201,178,154,.8);
+        border-radius: inherit;
+        opacity: 0;
+        animation: spreeaiPilotRing 5.8s var(--spree-ease) infinite;
+      }
+      [data-spreeai-pilot-cta]:hover {
+        transform: translateY(-2px) scale(1.025) !important;
+        box-shadow: 0 16px 38px rgba(0,0,0,.3) !important;
+      }
+      @keyframes spreeaiPilotPulse {
+        0%, 60%, 100% { transform: translateY(0) scale(1); box-shadow: 0 10px 28px rgba(0,0,0,.24); }
+        68% { transform: translateY(-2px) scale(1.055); box-shadow: 0 16px 44px rgba(0,0,0,.32), 0 0 0 8px rgba(184,161,139,.13); }
+        77% { transform: translateY(0) scale(1.015); box-shadow: 0 12px 34px rgba(0,0,0,.28), 0 0 0 2px rgba(184,161,139,.08); }
+      }
+      @keyframes spreeaiPilotShine {
+        0%, 59% { transform: rotate(18deg) translateX(-140%); opacity: 0; }
+        64% { opacity: .85; }
+        76% { transform: rotate(18deg) translateX(520%); opacity: .15; }
+        77%, 100% { transform: rotate(18deg) translateX(520%); opacity: 0; }
+      }
+      @keyframes spreeaiPilotRing {
+        0%, 62%, 100% { opacity:0; transform:scale(1); }
+        68% { opacity:.75; transform:scale(1.08); }
+        78% { opacity:0; transform:scale(1.14); }
       }
       [data-spreeai-scroll-cue] {
         position: fixed;
@@ -670,6 +887,86 @@
         75% { opacity: 1; }
         100% { opacity: 0; transform: translate(-50%,15px); }
       }
+      [data-spreeai-demo-cta] > [data-panel-inner] {
+        isolation: isolate;
+        display: grid !important;
+        place-items: center !important;
+        padding-bottom: 88px !important;
+        box-sizing: border-box !important;
+        background: #141210 !important;
+      }
+      [data-spreeai-demo-cta] > [data-panel-inner]::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        background: linear-gradient(110deg,rgba(11,9,8,.86),rgba(11,9,8,.46) 52%,rgba(11,9,8,.74));
+        pointer-events: none;
+      }
+      [data-spreeai-demo-cta] video[data-video-slot="demo"] {
+        position: absolute !important;
+        inset: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        filter: saturate(.62) contrast(1.03);
+      }
+      [data-spreeai-demo-card] {
+        position: relative;
+        z-index: 4;
+        display: grid;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+        animation: none !important;
+        grid-template-columns: minmax(280px,.82fr) minmax(360px,1.18fr);
+        width: min(1040px, calc(100% - clamp(56px,10vw,170px)));
+        min-height: min(560px, 68vh);
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,.28);
+        border-radius: 28px;
+        background: rgba(246,242,237,.94);
+        box-shadow: 0 40px 120px rgba(0,0,0,.36);
+        backdrop-filter: blur(28px) saturate(118%);
+      }
+      [data-spreeai-demo-portrait] { position:relative; min-height:420px; overflow:hidden; background:#d8cec5; }
+      [data-spreeai-demo-portrait]::after {
+        content:"";
+        position:absolute;
+        inset:0;
+        background:linear-gradient(180deg,transparent 62%,rgba(18,15,13,.18));
+        pointer-events:none;
+      }
+      [data-spreeai-demo-portrait] img { display:block; width:100%; height:100%; object-fit:cover; object-position:50% 20%; }
+      [data-spreeai-demo-copy] {
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        align-items:flex-start;
+        padding:clamp(38px,5vw,78px);
+        color:#151311;
+      }
+      [data-spreeai-demo-copy] > span { font:600 11px/1 var(--spree-sans); letter-spacing:.16em; color:rgba(21,19,17,.48); }
+      [data-spreeai-demo-copy] h2 { margin:22px 0 18px; font-size:clamp(48px,5.3vw,84px) !important; line-height:.94 !important; }
+      [data-spreeai-demo-copy] p { max-width:520px; margin:0; font-size:clamp(17px,1.45vw,21px) !important; color:rgba(21,19,17,.68); }
+      [data-spreeai-demo-actions] { display:flex; flex-wrap:wrap; gap:10px; margin-top:32px; }
+      [data-spreeai-demo-actions] a {
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        min-height:48px;
+        padding:0 22px;
+        border:1px solid rgba(21,19,17,.18);
+        border-radius:999px;
+        color:#151311 !important;
+        background:rgba(255,255,255,.38);
+        font-weight:500 !important;
+        text-decoration:none;
+        transition:transform .24s var(--spree-ease),background .24s,color .24s;
+      }
+      [data-spreeai-demo-actions] a:last-child { color:#fff !important; border-color:#151311; background:#151311; }
+      [data-spreeai-demo-actions] a:hover { transform:translateY(-2px); }
+      [data-spreeai-demo-cta] [data-spreeai-section-label] { z-index:6; color:rgba(255,255,255,.74) !important; opacity:1 !important; }
       @media (prefers-reduced-motion: reduce) {
         [data-spreeai-scroll-dot] { animation: none; }
         [data-spreeai-output-visual], [data-spreeai-shopper-visual] { transition: opacity .2s ease !important; }
@@ -741,6 +1038,41 @@
           font-size: 42px !important;
           line-height: 1.02 !important;
         }
+        [data-spreeai-timeline] [data-panel-inner] > *:not([data-spreeai-mobile-timeline]) { display:none !important; }
+        [data-spreeai-mobile-timeline] {
+          position:absolute;
+          inset:0;
+          display:flex !important;
+          flex-direction:column;
+          justify-content:center;
+          gap:18px;
+          padding:64px 24px 104px;
+          box-sizing:border-box;
+          color:#fff;
+          opacity:1 !important;
+          transform:none !important;
+        }
+        [data-spreeai-mobile-timeline] > span { font:600 10px/1 var(--spree-sans); letter-spacing:.16em; color:rgba(255,255,255,.58); }
+        [data-spreeai-mobile-timeline] > h2 {
+          width:100% !important;
+          max-width:320px !important;
+          margin:0 !important;
+          font-size:44px !important;
+          line-height:.98 !important;
+          color:#fff !important;
+        }
+        [data-spreeai-mobile-timeline] > div { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+        [data-spreeai-mobile-timeline] article {
+          min-height:170px;
+          padding:16px;
+          border:1px solid rgba(255,255,255,.16);
+          border-radius:16px;
+          background:rgba(255,255,255,.055);
+          box-shadow:0 18px 46px rgba(0,0,0,.16);
+        }
+        [data-spreeai-mobile-timeline] article small { display:block; font:600 9px/1 var(--spree-sans); letter-spacing:.12em; color:rgba(255,255,255,.52); }
+        [data-spreeai-mobile-timeline] article strong { display:block; margin:12px 0 10px; font:400 22px/1 var(--spree-serif); letter-spacing:-.02em; }
+        [data-spreeai-mobile-timeline] article p { margin:0; font-size:12px !important; line-height:1.3 !important; color:rgba(255,255,255,.7); }
         [data-panel][data-screen-label="08 Pilot CTA"] h2,
         [data-panel][data-screen-label="08 Pilot CTA"] p {
           left: 24px !important;
@@ -752,7 +1084,30 @@
           font-size: 38px !important;
           line-height: 1.02 !important;
         }
-        [data-spreeai-product-card] { display:none !important; }
+        [data-spreeai-product] [data-spreeai-product-card] { display:flex !important; width:90px !important; height:148px !important; border-radius:10px !important; }
+        [data-spreeai-product] [data-spreeai-product-card="top"] { left:67% !important; top:23% !important; }
+        [data-spreeai-product] [data-spreeai-product-card="bottom"] { left:8% !important; top:49% !important; }
+        [data-spreeai-feature-ui] { width:150px; padding:12px; border-radius:14px; }
+        [data-spreeai-feature-ui="fit"] { left:auto; right:8%; top:37%; }
+        [data-spreeai-feature-ui="styling"] { left:8%; top:46%; }
+        [data-spreeai-size-row] { gap:3px; margin:10px 0; }
+        [data-spreeai-size-row] span { font-size:9px; }
+        [data-spreeai-style-chips] { margin:10px 0; }
+        [data-spreeai-style-chips] span { padding:5px 7px; font-size:9px; }
+        [data-spreeai-demo-card] {
+          grid-template-columns:1fr;
+          width:calc(100% - 40px);
+          min-height:0;
+          max-height:calc(100svh - 150px);
+          border-radius:20px;
+        }
+        [data-spreeai-demo-cta] > [data-panel-inner] { padding-bottom:88px !important; }
+        [data-spreeai-demo-portrait] { min-height:0; height:38vh; }
+        [data-spreeai-demo-copy] { padding:24px; }
+        [data-spreeai-demo-copy] h2 { margin:12px 0 10px; font-size:38px !important; }
+        [data-spreeai-demo-copy] p { font-size:15px !important; line-height:1.35 !important; }
+        [data-spreeai-demo-actions] { margin-top:18px; gap:8px; }
+        [data-spreeai-demo-actions] a { min-height:42px; padding:0 14px; font-size:13px !important; }
         [data-spreeai-platform-grid], [data-spreeai-timeline-grid] { grid-template-columns: repeat(2,minmax(0,1fr)) !important; }
         [data-spreeai-platform-card], [data-spreeai-timeline-card] { min-height: 132px !important; padding: 16px !important; }
         [data-spreeai-socials] { grid-template-columns:1fr auto; align-items:start; }
@@ -763,9 +1118,18 @@
           left: 20px !important;
           right: 20px !important;
           width: auto !important;
+          max-width: none !important;
           bottom: 128px !important;
           gap: 13px !important;
-          padding: 0 20px !important;
+          padding: 18px 20px !important;
+          border-radius: 18px !important;
+          background: rgba(16,14,13,.34) !important;
+          backdrop-filter: blur(16px) saturate(112%) !important;
+        }
+        [data-screen-label="01 Hero"] video {
+          object-fit: cover !important;
+          object-position: 50% 50% !important;
+          background: linear-gradient(160deg,#8f8880,#d8d1cb 58%,#a49b93) !important;
         }
         [data-screen-label="01 Hero"] [data-dc-tpl="18"] {
           max-width: 330px !important;
@@ -1042,6 +1406,53 @@
     if (panel) panel.remove();
   }
 
+  function removeRequestedChannelsPanel() {
+    const panel = panelMap()["05 Shopper types"];
+    if (panel) panel.remove();
+  }
+
+  function buildLiveDemoCta() {
+    const panel = panelMap()["07 Live demo"];
+    if (!panel || panel.dataset.spreeaiDemoCta) return;
+    const inner = panel.firstElementChild;
+    if (!inner) return;
+    panel.dataset.spreeaiDemoCta = "true";
+
+    const legacyArtwork = panel.querySelector('img[alt*="Try SPREEAI"]');
+    if (legacyArtwork) {
+      legacyArtwork.style.display = "none";
+      legacyArtwork.setAttribute("aria-hidden", "true");
+    }
+
+    const card = document.createElement("div");
+    card.dataset.spreeaiDemoCard = "true";
+
+    const media = document.createElement("div");
+    media.dataset.spreeaiDemoPortrait = "true";
+    const image = document.createElement("img");
+    image.src = "A01_Nyah_Hero_FIGMA.jpg";
+    image.alt = "Black woman featured in the SPREEAI live experience";
+    media.appendChild(image);
+
+    const copy = document.createElement("div");
+    copy.dataset.spreeaiDemoCopy = "true";
+    copy.innerHTML = '<span>SEE IT ON YOUR CATALOG</span><h2>Try SPREEAI live.</h2><p>See virtual try-on, fit intelligence, and styling working together on a real shopping journey.</p><div data-spreeai-demo-actions><a href="https://demo.spreeai.com/">See a live demo</a><a href="https://spreeai.com/create-account/">Start a Pilot</a></div>';
+
+    card.appendChild(media);
+    card.appendChild(copy);
+    inner.appendChild(card);
+  }
+
+  function buildMobileTimeline(panel) {
+    if (!panel || panel.querySelector("[data-spreeai-mobile-timeline]")) return;
+    const inner = panel.firstElementChild;
+    if (!inner) return;
+    const timeline = document.createElement("div");
+    timeline.dataset.spreeaiMobileTimeline = "true";
+    timeline.innerHTML = '<span>THE PILOT</span><h2>Prove it on your catalog.</h2><div><article><small>STEP 01</small><strong>Select products</strong><p>Choose a representative catalog set. No reshoots.</p></article><article><small>STEP 02</small><strong>Match the brand</strong><p>Tune the experience to your brand and journey.</p></article><article><small>STEP 03</small><strong>Launch</strong><p>Go live on selected product pages.</p></article><article><small>STEP 04</small><strong>Measure, then scale</strong><p>Learn what works. Expand when the value is clear.</p></article></div>';
+    inner.appendChild(timeline);
+  }
+
   function addSectionLabel(panel, label) {
     if (!panel || panel.querySelector("[data-spreeai-section-label]")) return;
     const item = document.createElement("div");
@@ -1196,6 +1607,7 @@
     if (timeline) {
       timeline.dataset.spreeaiTimeline = "true";
       addSectionLabel(timeline, "The pilot");
+      buildMobileTimeline(timeline);
       const grid = timeline.firstElementChild && timeline.firstElementChild.children[1];
       if (grid) {
         grid.dataset.spreeaiTimelineGrid = "true";
@@ -1295,7 +1707,7 @@
     }
     const nav = document.querySelector("nav");
     if (nav) {
-      const cta = Array.from(nav.querySelectorAll("a")).find(function (link) { return link.textContent.trim() === "Start your pilot"; });
+      const cta = Array.from(nav.querySelectorAll("a")).find(function (link) { return link.textContent.trim().toLowerCase() === "start a pilot"; });
       if (cta) cta.dataset.spreeaiPilotCta = "true";
       nav.dataset.spreeaiFooterDocked = "false";
     }
@@ -1315,7 +1727,7 @@
       "See a live demo": "https://demo.spreeai.com/",
       "Partner portal": "https://partner.spreeai.com/",
       "Start a pilot": "https://spreeai.com/create-account/",
-      "Start your pilot": "https://spreeai.com/create-account/"
+      "Start a Pilot": "https://spreeai.com/create-account/"
     };
     document.querySelectorAll("nav a").forEach(function (link) {
       const route = routes[link.textContent.trim()];
@@ -1454,7 +1866,7 @@
     replaceExactText(panels["08 Pilot CTA"], {
       "See SPREEAI on your product catalogue in 48 hours": "Start with your catalog.",
       "We'll run SPREEAI on a selection of your catalog. No integration needed. Exit anytime.": "See SPREEAI on a representative product set in 48 hours. No reshoot. No long implementation.",
-      "Start a pilot": "Start your pilot",
+      "Start a pilot": "Start a Pilot",
       "Schedule a conversation": "Talk to our team"
     });
 
@@ -1469,7 +1881,7 @@
       "Try a live demo": "See a live demo",
       "Partner login": "Partner portal",
       "Read the latest": "Latest thinking",
-      "Start a pilot": "Start your pilot"
+      "Start a pilot": "Start a Pilot"
     });
     document.documentElement.dataset.spreeaiCopy = "platform";
 
@@ -1484,12 +1896,12 @@
     }
 
     setButtonLabel(panels["01 Hero"] && panels["01 Hero"].querySelectorAll("button")[0], "Explore the platform");
-    setButtonLabel(panels["01 Hero"] && panels["01 Hero"].querySelectorAll("button")[1], "Start your pilot");
+    setButtonLabel(panels["01 Hero"] && panels["01 Hero"].querySelectorAll("button")[1], "Start a Pilot");
     const legacyHeroButton = panels["01 Hero"] && Array.from(panels["01 Hero"].querySelectorAll("button")).find(function (button) {
       return button.textContent.trim() === "See it on your catalogue";
     });
     setButtonLabel(legacyHeroButton, "Explore the platform");
-    setButtonLabel(panels["08 Pilot CTA"] && panels["08 Pilot CTA"].querySelectorAll("button")[0], "Start your pilot");
+    setButtonLabel(panels["08 Pilot CTA"] && panels["08 Pilot CTA"].querySelectorAll("button")[0], "Start a Pilot");
     setButtonLabel(panels["08 Pilot CTA"] && panels["08 Pilot CTA"].querySelectorAll("button")[1], "Talk to our team");
 
     const shopperHeadings = panels["05 Shopper types"] && panels["05 Shopper types"].querySelectorAll("h2");
@@ -1501,18 +1913,44 @@
     if (legacyFootnote) legacyFootnote.style.display = "none";
   }
 
+  function normalizeCtaLabels() {
+    const setFirstText = function (element, label) {
+      if (!element) return;
+      const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+      while (walker.nextNode()) {
+        if (!walker.currentNode.nodeValue.trim()) continue;
+        walker.currentNode.nodeValue = label;
+        return;
+      }
+    };
+    const heroButtons = panelMap()["01 Hero"] && panelMap()["01 Hero"].querySelectorAll("button");
+    if (heroButtons && heroButtons[0]) setFirstText(heroButtons[0], "Explore the platform");
+    if (heroButtons && heroButtons[1]) setFirstText(heroButtons[1], "Start a Pilot");
+    const nav = document.querySelector("nav");
+    if (nav) {
+      const navCta = Array.from(nav.querySelectorAll("a")).find(function (link) {
+        return link.textContent.trim().toLowerCase().indexOf("start") === 0;
+      });
+      if (navCta) setFirstText(navCta, "Start a Pilot");
+    }
+  }
+
   function applyPolish() {
     injectPolishStyles();
     addBrandLoader();
     removeRedundantPilotPanel();
     replacePilotArtwork();
     applyPlatformCopy();
+    removeRequestedChannelsPanel();
+    buildLiveDemoCta();
     polishModelPanels();
     redesignCorePanels();
     setupCleanPanelTransitions();
     setupCardSpotlights();
     enhanceFooterAndNav();
     wireNavigation();
+    normalizeCtaLabels();
+    setTimeout(normalizeCtaLabels, 350);
     stabilizeMobileViewport();
     addScrollCue();
     addScrollMeter();
