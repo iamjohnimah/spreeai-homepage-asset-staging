@@ -149,6 +149,7 @@
         --spree-shadow: 0 18px 50px rgba(22, 19, 16, .14), 0 2px 8px rgba(22, 19, 16, .08);
         --spree-card-radius: 12px;
         --spree-ease: cubic-bezier(.22, 1, .36, 1);
+        --spree-accent: #d77b63;
       }
       body,
       [data-panel] { font-family: var(--spree-sans) !important; }
@@ -477,10 +478,10 @@
       [data-spreeai-pilot-frame] video { object-position: 50% 20% !important; }
       footer[data-spreeai-footer] {
         z-index: 12 !important;
-        padding: clamp(72px,8vw,120px) clamp(30px,7vw,110px) 42px !important;
-        gap: clamp(48px,6vw,84px) !important;
+        padding: clamp(72px,8vw,120px) clamp(30px,7vw,110px) 32px !important;
+        gap: clamp(42px,5vw,72px) !important;
       }
-      footer[data-spreeai-footer] img[alt="SPREEAI"] { filter: invert(1); opacity: .94; height: 24px !important; }
+      [data-spreeai-footer-brand] img { filter: invert(1); opacity: .94; height: 24px !important; }
       [data-spreeai-footer-main] {
         display: grid !important;
         grid-template-columns: minmax(180px,1.05fr) minmax(520px,2fr) !important;
@@ -493,17 +494,17 @@
         gap: 18px 42px !important;
       }
       [data-spreeai-footer-nav] a,
-      [data-spreeai-socials] a {
+      [data-spreeai-social-links] a {
         color: rgba(255,255,255,.74) !important;
         font: 400 16px/1.2 var(--spree-sans) !important;
         transition: color .2s, transform .2s;
       }
       [data-spreeai-footer-nav] a:hover,
-      [data-spreeai-socials] a:hover { color: #fff !important; transform: translateY(-2px); }
+      [data-spreeai-social-links] a:hover { color: #fff !important; transform: translateY(-2px); }
       [data-spreeai-socials] {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
+        display: grid;
+        grid-template-columns: auto minmax(0,1fr) auto;
+        align-items: center;
         gap: 18px 30px;
         width: 100%;
         max-width: 1240px;
@@ -517,13 +518,75 @@
         letter-spacing: .12em;
         text-transform: uppercase;
       }
-      [data-spreeai-social-links] { display:flex; flex-wrap:wrap; gap:clamp(22px,4vw,54px); }
+      [data-spreeai-social-links] { display:flex; flex-wrap:wrap; justify-content:center; gap:clamp(20px,3vw,46px); }
+      [data-spreeai-back-top] {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: #fff !important;
+        font: 500 15px/1 var(--spree-sans) !important;
+        white-space: nowrap;
+        text-decoration: none;
+        transition: color .25s ease, transform .25s var(--spree-ease);
+      }
+      [data-spreeai-back-top] span {
+        display: grid;
+        place-items: center;
+        width: 31px;
+        height: 31px;
+        border: 1px solid rgba(255,255,255,.28);
+        border-radius: 50%;
+        transition: border-color .25s ease, background .25s ease;
+      }
+      [data-spreeai-back-top]:hover { color: var(--spree-accent) !important; transform: translateY(-2px); }
+      [data-spreeai-back-top]:hover span { border-color: var(--spree-accent); background: rgba(215,123,99,.1); }
+      [data-spreeai-footer-wordmark] {
+        width: 100%;
+        max-width: 1240px;
+        margin: clamp(4px,1vw,14px) auto -8px;
+        overflow: hidden;
+      }
+      [data-spreeai-footer-wordmark] a { display:block; width:100%; }
+      [data-spreeai-footer-wordmark] img {
+        display: block;
+        width: 100% !important;
+        height: auto !important;
+        max-height: none !important;
+        filter: brightness(0) invert(1);
+        opacity: .97;
+        transform: scale(1.004);
+        transform-origin: center;
+      }
+      [data-spreeai-scroll-meter] {
+        position: fixed;
+        z-index: 100000;
+        top: 0;
+        right: 9px;
+        width: 2px;
+        height: 100dvh;
+        background: rgba(34,31,29,.18);
+        pointer-events: none;
+      }
+      [data-spreeai-scroll-progress] {
+        display: block;
+        width: 100%;
+        height: 100%;
+        background: var(--spree-accent);
+        box-shadow: 0 0 12px rgba(215,123,99,.28);
+        transform: scaleY(0);
+        transform-origin: top;
+        will-change: transform;
+      }
       [data-spreeai-pilot-cta] {
         position: relative;
         overflow: hidden;
         background-image: linear-gradient(110deg,#050505 0%,#050505 42%,#383838 49%,#050505 56%,#050505 100%) !important;
         background-size: 260% 100% !important;
         animation: spreeaiPilotGlow 6s ease-in-out infinite !important;
+      }
+      nav[data-spreeai-footer-hidden="true"] {
+        opacity: 0 !important;
+        pointer-events: none !important;
       }
       @keyframes spreeaiPilotGlow {
         0%, 68%, 100% { background-position: 100% 0; box-shadow: 0 0 0 rgba(0,0,0,0); transform: translateZ(0) scale(1); }
@@ -607,6 +670,7 @@
       }
       @media (max-width: 720px) {
         [data-spreeai-scroll-cue] { right: 10px; }
+        [data-spreeai-scroll-meter] { right: 5px; }
         [data-spreeai-scroll-cue] > span:first-child { display: none; }
         [data-spreeai-section-label] { left: 24px; }
         [data-spreeai-product] video[data-video-slot^="output-"], [data-spreeai-shopper-frame] {
@@ -620,8 +684,9 @@
         [data-spreeai-platform-grid], [data-spreeai-timeline-grid] { grid-template-columns: repeat(2,minmax(0,1fr)) !important; }
         [data-spreeai-platform-card], [data-spreeai-timeline-card] { min-height: 150px !important; padding: 18px !important; }
         [data-spreeai-footer-nav] { grid-template-columns: repeat(2,minmax(0,1fr)) !important; }
-        [data-spreeai-socials] { align-items:flex-start; }
-        [data-spreeai-social-links] { width:100%; justify-content:space-between; }
+        [data-spreeai-socials] { grid-template-columns:1fr auto; align-items:start; }
+        [data-spreeai-social-links] { grid-column:1 / -1; width:100%; justify-content:flex-start; gap:18px 28px; }
+        [data-spreeai-footer-wordmark] { margin-top: 0; }
         [data-spreeai-pilot-frame] { width: calc(100% - 40px) !important; aspect-ratio: 16/8 !important; }
       }
     `;
@@ -764,6 +829,33 @@
     window.addEventListener("scroll", update, { passive: true });
     update();
     document.body.appendChild(cue);
+  }
+
+  function addScrollMeter() {
+    if (document.querySelector("[data-spreeai-scroll-meter]")) return;
+    const meter = document.createElement("div");
+    meter.dataset.spreeaiScrollMeter = "true";
+    meter.setAttribute("aria-hidden", "true");
+    const progress = document.createElement("span");
+    progress.dataset.spreeaiScrollProgress = "true";
+    meter.appendChild(progress);
+
+    let frame = null;
+    const update = function () {
+      frame = null;
+      const page = document.documentElement;
+      const distance = Math.max(1, page.scrollHeight - window.innerHeight);
+      const value = Math.min(1, Math.max(0, window.scrollY / distance));
+      progress.style.transform = "scaleY(" + value.toFixed(4) + ")";
+    };
+    const requestUpdate = function () {
+      if (frame) return;
+      frame = requestAnimationFrame(update);
+    };
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate, { passive: true });
+    document.body.appendChild(meter);
+    update();
   }
 
   function addBrandLoader() {
@@ -1017,6 +1109,7 @@
       const main = footer.children[0];
       if (main) {
         main.dataset.spreeaiFooterMain = "true";
+        if (main.children[0]) main.children[0].dataset.spreeaiFooterBrand = "true";
         const columns = main.children[1];
         if (columns) {
           const links = Array.from(columns.querySelectorAll("a"));
@@ -1036,6 +1129,7 @@
         ["Threads", "https://www.threads.com/@spreeai?igshid=NTc4MTIwNjQ2YQ=="],
         ["LinkedIn", "https://www.linkedin.com/company/spreeai"],
         ["Instagram", "https://www.instagram.com/spreeai/"],
+        ["TikTok", "https://www.tiktok.com/@spreeai"],
         ["X", "https://twitter.com/spreeai"],
         ["YouTube", "https://www.youtube.com/channel/UCwqmYq9Cp-JE4iOU-LtRTPg"]
       ].forEach(function (item) {
@@ -1046,14 +1140,52 @@
         link.rel = "noopener noreferrer";
         socialLinks.appendChild(link);
       });
+      const backToTop = document.createElement("a");
+      backToTop.dataset.spreeaiBackTop = "true";
+      backToTop.href = "#top";
+      backToTop.setAttribute("aria-label", "Back to the top of the SPREEAI homepage");
+      backToTop.innerHTML = 'Back to top <span aria-hidden="true">↑</span>';
+      backToTop.addEventListener("click", function (event) {
+        event.preventDefault();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
       socials.appendChild(socialLabel);
       socials.appendChild(socialLinks);
+      socials.appendChild(backToTop);
       footer.insertBefore(socials, footer.lastElementChild);
+
+      const sourceLogo = document.querySelector("nav img[alt='SPREEAI']") || footer.querySelector("img[alt='SPREEAI']");
+      const wordmark = document.createElement("div");
+      wordmark.dataset.spreeaiFooterWordmark = "true";
+      const wordmarkLink = document.createElement("a");
+      wordmarkLink.href = "#top";
+      wordmarkLink.setAttribute("aria-label", "SPREEAI home");
+      if (sourceLogo) {
+        const logo = sourceLogo.cloneNode(true);
+        logo.removeAttribute("style");
+        logo.alt = "SPREEAI";
+        wordmarkLink.appendChild(logo);
+      } else {
+        const fallback = document.createElement("span");
+        fallback.textContent = "SPREEAI";
+        fallback.style.cssText = "display:block;color:#fff;font:400 clamp(84px,17vw,260px)/.8 var(--spree-serif);letter-spacing:-.055em;text-align:center";
+        wordmarkLink.appendChild(fallback);
+      }
+      wordmark.appendChild(wordmarkLink);
+      footer.insertBefore(wordmark, footer.lastElementChild);
     }
     const nav = document.querySelector("nav");
     if (nav) {
+      nav.style.transition = "opacity .35s ease";
       const cta = Array.from(nav.querySelectorAll("a")).find(function (link) { return link.textContent.trim() === "Start your pilot"; });
       if (cta) cta.dataset.spreeaiPilotCta = "true";
+      if (footer && !nav.dataset.spreeaiFooterObserver) {
+        nav.dataset.spreeaiFooterObserver = "true";
+        const footerObserver = new IntersectionObserver(function (entries) {
+          nav.dataset.spreeaiFooterHidden = entries[0].isIntersecting ? "true" : "false";
+        }, { threshold: .16 });
+        footerObserver.observe(footer);
+      }
     }
   }
 
@@ -1202,6 +1334,7 @@
     setupCardSpotlights();
     enhanceFooterAndNav();
     addScrollCue();
+    addScrollMeter();
   }
 
   function applyReplacements() {
