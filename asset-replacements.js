@@ -338,6 +338,7 @@
       button.dataset.spreeaiPolishBound = "true";
       button.addEventListener("click", function () {
         setTimeout(function () {
+          applyPlatformCopy();
           const panel = button.closest("[data-panel]");
           if (!panel) return;
           const visibleMedia = Array.from(panel.querySelectorAll("img,video")).filter(function (media) {
@@ -373,11 +374,146 @@
     document.body.appendChild(cue);
   }
 
+  function replaceExactText(root, replacements) {
+    if (!root) return;
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(function (node) {
+      const original = node.nodeValue;
+      const key = original.trim();
+      if (!Object.prototype.hasOwnProperty.call(replacements, key)) return;
+      const leading = (original.match(/^\s*/) || [""])[0];
+      const trailing = (original.match(/\s*$/) || [""])[0];
+      node.nodeValue = leading + replacements[key] + trailing;
+    });
+  }
+
+  function applyPlatformCopy() {
+    const panels = {};
+    document.querySelectorAll("[data-panel]").forEach(function (panel) {
+      panels[panel.dataset.screenLabel] = panel;
+    });
+
+    replaceExactText(panels["01 Hero"], {
+      "Your catalog.": "One platform.",
+      "On every body.": "Every body.",
+      "Virtual try-on, fit prediction and outfit intelligence — from one customer photo, live across every shopping channel.": "Virtual try-on, fit intelligence, and smart styling—working together across every shopper, garment, and channel.",
+      "See it on your catalogue": "See it on your catalog",
+      "Try a live demo": "Explore the platform"
+    });
+
+    replaceExactText(panels["02 Problem"], {
+      "Fit uncertainty costs conversion and drives customer returns": "Shopping is one decision. Technology made it three.",
+      "69% of shoppers leave a product page to find better information — and most never come back.": "Try-on here. Fit there. Styling somewhere else. SPREEAI brings the entire decision into one platform.",
+      "#1": "ONE",
+      "Reason for cart abandonment is sizing variance": "Connected journey from product page to purchase",
+      "70%": "THREE",
+      "Of fashion returns are due to fit, not personal taste": "Intelligence systems, working as one",
+      "71%": "EVERY",
+      "Would buy more often if virtual try-on were available": "Shopping moments, powered by the same platform"
+    });
+
+    replaceExactText(panels["03 One input"], {
+      "One input.": "One platform.",
+      "Three outputs.": "Three answers.",
+      "Photorealistic render of the exact garment on the customer's own body — fabric drape and proportion included, not a generic model swap.": "See the exact garment on the shopper's own body—with realistic drape, scale, and proportion.",
+      "Fit builds confidence. Confidence converts.": "The right size. Before checkout.",
+      "A size recommendation built from body measurements and the garment's actual pattern data, not just a size chart lookup.": "Fit intelligence connects body measurements with garment data to recommend the size that feels right.",
+      "From one piece to the whole look.": "One garment. A complete look.",
+      "Coordinated outfit picks pulled from the live catalogue, so the recommendation is always something they can actually buy.": "Styling intelligence turns one product into coordinated, shoppable outfits from the live catalog.",
+      "Try on": "Virtual try-on",
+      "Size and fit": "Fit intelligence"
+    });
+
+    replaceExactText(panels["04 Why SPREEAI"], {
+      "Why": "Not a",
+      "SPREEAI": "feature.",
+      "is different": "The platform.",
+      "Other platforms fragment the decision. Visualization tools don't solve for fit. Fit tools don't address style. Most try-on experiences add friction instead of removing it.": "Try-on. Fit. Styling. Most solutions stop at one. SPREEAI connects all three in a single platform.",
+      "Less hesitation": "One connected decision",
+      "The decision stays on your product page.": "See it, size it, and style it in one flow.",
+      "Fewer returns": "Every channel in sync",
+      "Expectations and fit align before checkout.": "Online, in-store, and clienteling share one platform.",
+      "Larger baskets": "More from every garment",
+      "A product becomes a coordinated look.": "Turn one product into a complete, shoppable look.",
+      "Live in days": "Built to launch",
+      "No reshoots. No infrastructure rebuild.": "Go live without reshoots or rebuilding your commerce stack."
+    });
+
+    replaceExactText(panels["05 Shopper types"], {
+      "Convert uncertainty into a decision.": "Confidence, built into every product page.",
+      "Add try-on, fit, and styling at the moment of consideration, inside the experience customers already know.": "Let shoppers see it, size it, and style it—without leaving the moment of intent.",
+      "More from every fitting room.": "One platform. A smarter store.",
+      "Give associates a visual, data-informed way to move from one garment to the right size and the complete look.": "Give associates the same intelligence to recommend the right size, the next piece, and the complete look.",
+      "Private client styling, anywhere.": "Clienteling that continues everywhere.",
+      "Create curated, customer-specific looks that advisors and stylists can share before the client arrives—or after they leave.": "Create personal looks advisors can build, share, and continue before, during, or after an appointment.",
+      "Online shoppers": "Ecommerce",
+      "In-store customers": "Retail stores",
+      "Very Important Clients": "Clienteling"
+    });
+
+    replaceExactText(panels["06 Pilot timeline"], {
+      "From first call to a live pilot on your catalogue in days.": "A platform you can prove in days.",
+      "Catalogue sync": "Connect the catalog",
+      "We pull a sample from your product feed. No reshoot, no new asset spec.": "We prepare a representative product set. No reshoots. No new asset workflow.",
+      "Brand fit pass": "Make it yours",
+      "UI matched to your site's type, color, and layout, so it looks native, not bolted on.": "We tune the experience to your brand, customers, and commerce journey.",
+      "Live on a page set": "Launch the platform",
+      "A single script tag live on a category or product page of your choosing.": "Try-on, fit, and styling go live together on a selected page set.",
+      "Exit anytime": "Learn, then scale",
+      "Pilots run month to month. Remove the tag and it's gone, nothing left behind.": "Measure what matters. Refine the experience. Expand when the value is clear."
+    });
+
+    replaceExactText(panels["08 Pilot CTA"], {
+      "See SPREEAI on your product catalogue in 48 hours": "See the whole platform on your catalog.",
+      "We'll run SPREEAI on a selection of your catalog. No integration needed. Exit anytime.": "In 48 hours, see try-on, fit, and styling working together on your own products.",
+      "Start a pilot": "Start your pilot",
+      "Schedule a conversation": "Talk to our team"
+    });
+
+    replaceExactText(document.querySelector("footer"), {
+      "Explore the product": "Explore the platform",
+      "Try a live demo": "See a live demo",
+      "Partner login": "Partner portal"
+    });
+    replaceExactText(document.querySelector("nav"), {
+      "Explore the product": "Explore the platform",
+      "Try a live demo": "See a live demo",
+      "Partner login": "Partner portal",
+      "Start a pilot": "Start your pilot"
+    });
+    document.documentElement.dataset.spreeaiCopy = "platform";
+
+    function setButtonLabel(button, label) {
+      if (!button) return;
+      const walker = document.createTreeWalker(button, NodeFilter.SHOW_TEXT);
+      let node = null;
+      while (walker.nextNode()) {
+        if (walker.currentNode.nodeValue.trim()) { node = walker.currentNode; break; }
+      }
+      if (node) node.nodeValue = label;
+    }
+
+    setButtonLabel(panels["01 Hero"] && panels["01 Hero"].querySelectorAll("button")[0], "See it on your catalog");
+    setButtonLabel(panels["08 Pilot CTA"] && panels["08 Pilot CTA"].querySelectorAll("button")[0], "Start your pilot");
+    setButtonLabel(panels["08 Pilot CTA"] && panels["08 Pilot CTA"].querySelectorAll("button")[1], "Talk to our team");
+
+    const shopperHeadings = panels["05 Shopper types"] && panels["05 Shopper types"].querySelectorAll("h2");
+    if (shopperHeadings && shopperHeadings[2]) shopperHeadings[2].textContent = "Clienteling that continues everywhere.";
+
+    const legacyFootnote = panels["04 Why SPREEAI"] && Array.from(panels["04 Why SPREEAI"].querySelectorAll("p,span,div")).find(function (element) {
+      return element.textContent.trim().indexOf("*Results vary") === 0;
+    });
+    if (legacyFootnote) legacyFootnote.style.display = "none";
+  }
+
   function applyPolish() {
     injectPolishStyles();
     replacePilotArtwork();
     polishModelPanels();
     addScrollCue();
+    applyPlatformCopy();
   }
 
   function applyReplacements() {
