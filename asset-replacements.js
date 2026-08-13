@@ -221,6 +221,58 @@
         0%, 100% { transform: translateY(0); }
         50% { transform: translateY(-8px); }
       }
+      [data-spreeai-loader] {
+        position: fixed;
+        inset: 0;
+        z-index: 2147483647;
+        display: grid;
+        place-items: center;
+        background: #f7f5f2;
+        color: #080808;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: none;
+        transition: opacity .72s var(--spree-ease), visibility .72s;
+      }
+      [data-spreeai-loader][data-exit="true"] {
+        opacity: 0;
+        visibility: hidden;
+      }
+      [data-spreeai-loader-mark] {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        animation: spreeaiLoaderMark 1.25s var(--spree-ease) both;
+      }
+      [data-spreeai-loader-mark] img {
+        display: block;
+        width: clamp(150px, 20vw, 260px);
+        height: auto;
+      }
+      [data-spreeai-loader-line] {
+        width: clamp(120px, 15vw, 210px);
+        height: 1px;
+        background: rgba(0,0,0,.15);
+        overflow: hidden;
+      }
+      [data-spreeai-loader-line]::after {
+        content: "";
+        display: block;
+        width: 100%;
+        height: 100%;
+        background: #050505;
+        transform-origin: left;
+        animation: spreeaiLoaderLine 1.15s .12s var(--spree-ease) both;
+      }
+      @keyframes spreeaiLoaderMark {
+        from { opacity: 0; transform: translateY(12px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes spreeaiLoaderLine {
+        from { transform: scaleX(0); }
+        to { transform: scaleX(1); }
+      }
       [data-spreeai-stage-content] {
         transition: opacity .5s var(--spree-ease), transform .6s var(--spree-ease);
       }
@@ -972,9 +1024,38 @@
   }
 
   function addBrandLoader() {
+    if (document.querySelector("[data-spreeai-loader]")) return;
+    const mark = document.querySelector("nav img[alt='SPREEAI']") || document.querySelector("footer img[alt='SPREEAI']");
+    const loader = document.createElement("div");
+    loader.dataset.spreeaiLoader = "true";
+    loader.setAttribute("role", "status");
+    loader.setAttribute("aria-label", "Loading SPREEAI");
+    const loaderMark = document.createElement("div");
+    loaderMark.dataset.spreeaiLoaderMark = "true";
+    if (mark) {
+      const logo = mark.cloneNode(true);
+      logo.removeAttribute("style");
+      logo.alt = "SPREEAI";
+      loaderMark.appendChild(logo);
+    } else {
+      const wordmark = document.createElement("span");
+      wordmark.textContent = "SPREEAI";
+      wordmark.style.cssText = "font:400 clamp(46px,7vw,82px)/1 var(--spree-serif);letter-spacing:-.04em";
+      loaderMark.appendChild(wordmark);
+    }
+    const line = document.createElement("span");
+    line.dataset.spreeaiLoaderLine = "true";
+    loaderMark.appendChild(line);
+    loader.appendChild(loaderMark);
     document.documentElement.dataset.spreeaiLoading = "false";
     document.documentElement.style.removeProperty("overflow");
     document.body.style.removeProperty("overflow");
+    document.body.appendChild(loader);
+    const finish = function () {
+      loader.dataset.exit = "true";
+      setTimeout(function () { loader.remove(); }, 820);
+    };
+    setTimeout(finish, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 350 : 1550);
   }
 
   function panelMap() {
