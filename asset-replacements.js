@@ -147,9 +147,9 @@
         --spree-serif: "Big Caslon", "Big Caslon Medium", Baskerville, "Times New Roman", serif;
         --spree-sans: Afacad, system-ui, sans-serif;
         --spree-shadow: 0 18px 50px rgba(22, 19, 16, .14), 0 2px 8px rgba(22, 19, 16, .08);
-        --spree-card-radius: 12px;
+        --spree-card-radius: 20px;
         --spree-ease: cubic-bezier(.22, 1, .36, 1);
-        --spree-accent: #d77b63;
+        --spree-accent: #ad9986;
       }
       body,
       [data-panel] { font-family: var(--spree-sans) !important; }
@@ -190,12 +190,31 @@
       [data-panel] p,
       [data-panel] button,
       [data-panel] a { font-family: var(--spree-sans) !important; }
+      nav,
+      footer,
+      nav a,
+      footer a,
+      footer span { font-family: var(--spree-sans) !important; }
       [data-spreeai-model-frame] {
         border-radius: var(--spree-card-radius) !important;
         box-shadow: var(--spree-shadow) !important;
         outline: 1px solid rgba(255,255,255,.46);
         overflow: hidden !important;
         background: rgba(255,255,255,.2);
+      }
+      [data-screen-label="01 Hero"] > [data-panel-inner] {
+        border-radius: var(--spree-card-radius) !important;
+        overflow: hidden !important;
+      }
+      [data-spreeai-demo] > [data-panel-inner] {
+        left: 20px !important;
+        top: 20px !important;
+        right: 20px !important;
+        bottom: 20px !important;
+        width: auto !important;
+        height: auto !important;
+        border-radius: var(--spree-card-radius) !important;
+        overflow: hidden !important;
       }
       [data-spreeai-output-visual] {
         transition: opacity .52s var(--spree-ease), transform .52s var(--spree-ease) !important;
@@ -328,7 +347,7 @@
         top: 15.5% !important;
         width: 38% !important;
         height: calc(84.5% - 112px) !important;
-        border-radius: 20px !important;
+        border-radius: var(--spree-card-radius) !important;
       }
       [data-spreeai-product] [data-spreeai-product-card] { width: 11.5% !important; height: 24% !important; border-radius: 12px !important; }
       [data-spreeai-product] [data-spreeai-product-card="top"] { left: 62.5% !important; top: 22% !important; }
@@ -442,7 +461,7 @@
         top: 14.5% !important;
         bottom: 108px !important;
         width: 38% !important;
-        border-radius: 20px !important;
+        border-radius: var(--spree-card-radius) !important;
       }
       [data-spreeai-timeline] [data-panel-inner] {
         background:
@@ -488,14 +507,14 @@
         max-width: 1460px !important;
         aspect-ratio: 16 / 7.2 !important;
         max-height: 42vh !important;
-        border-radius: 22px !important;
+        border-radius: var(--spree-card-radius) !important;
       }
       [data-spreeai-pilot-frame] video { object-position: 50% 20% !important; }
       footer[data-spreeai-footer] {
         position: relative !important;
         z-index: 12 !important;
-        padding: clamp(52px,6vw,82px) clamp(30px,7vw,110px) 32px !important;
-        gap: clamp(32px,4vw,52px) !important;
+        padding: clamp(28px,3.8vw,48px) clamp(30px,7vw,110px) 20px !important;
+        gap: 18px !important;
         scroll-snap-align: none !important;
       }
       [data-spreeai-social-links] a {
@@ -512,8 +531,8 @@
         width: 100%;
         max-width: 1240px;
         margin: 0 auto;
-        padding-top: 26px;
-        border-top: 1px solid rgba(255,255,255,.18);
+        padding-top: 0;
+        border-top: 0;
       }
       [data-spreeai-social-label] {
         color: #fff;
@@ -542,11 +561,11 @@
         transition: border-color .25s ease, background .25s ease;
       }
       [data-spreeai-back-top]:hover { color: var(--spree-accent) !important; transform: translateY(-2px); }
-      [data-spreeai-back-top]:hover span { border-color: var(--spree-accent); background: rgba(215,123,99,.1); }
+      [data-spreeai-back-top]:hover span { border-color: var(--spree-accent); background: rgba(173,153,134,.12); }
       [data-spreeai-footer-wordmark] {
         width: 100%;
-        max-width: 1240px;
-        margin: clamp(4px,1vw,14px) auto -8px;
+        max-width: 1000px;
+        margin: 0 auto -6px;
         overflow: hidden;
       }
       [data-spreeai-footer-wordmark] a { display:block; width:100%; }
@@ -575,7 +594,7 @@
         width: 100%;
         height: 100%;
         background: var(--spree-accent);
-        box-shadow: 0 0 12px rgba(215,123,99,.28);
+        box-shadow: 0 0 12px rgba(173,153,134,.32);
         transform: scaleY(0);
         transform-origin: top;
         will-change: transform;
@@ -587,40 +606,9 @@
         background-size: 260% 100% !important;
         animation: spreeaiPilotGlow 4.2s ease-in-out infinite !important;
       }
-      [data-spreeai-persistent-pilot] {
-        position: fixed;
-        z-index: 100001;
-        top: clamp(18px,2.2vw,30px);
-        right: clamp(24px,3.2vw,52px);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 46px;
-        padding: 0 21px;
-        border: 1px solid rgba(255,255,255,.26);
-        border-radius: 999px;
-        color: #fff !important;
-        background-image: linear-gradient(110deg,#050505 0%,#050505 42%,#454545 49%,#050505 56%,#050505 100%);
-        background-size: 260% 100%;
-        box-shadow: 0 10px 32px rgba(0,0,0,.18);
-        font: 500 15px/1 var(--spree-sans) !important;
-        text-decoration: none;
-        white-space: nowrap;
-        animation: spreeaiPilotGlow 4.2s ease-in-out infinite;
-        transition: opacity .28s ease, transform .35s var(--spree-ease), background-color .25s ease;
-      }
-      [data-spreeai-persistent-pilot]:hover {
-        background-color: #1d1d1d;
-        transform: translateY(-2px);
-      }
-      [data-spreeai-persistent-pilot][data-hidden="true"] {
-        opacity: 0;
-        transform: translateY(-12px);
-        pointer-events: none;
-      }
       @keyframes spreeaiPilotGlow {
         0%, 55%, 100% { background-position: 100% 0; box-shadow: 0 0 0 rgba(0,0,0,0), 0 10px 32px rgba(0,0,0,.18); }
-        72% { background-position: 0 0; box-shadow: 0 0 0 6px rgba(215,123,99,.12), 0 12px 34px rgba(0,0,0,.28); }
+        72% { background-position: 0 0; box-shadow: 0 0 0 6px rgba(173,153,134,.14), 0 12px 34px rgba(0,0,0,.28); }
         86% { background-position: 0 0; box-shadow: 0 0 0 rgba(0,0,0,0), 0 10px 32px rgba(0,0,0,.18); }
       }
       [data-spreeai-scroll-cue] {
@@ -636,7 +624,7 @@
         gap: 7px;
         border: 0;
         background: transparent;
-        color: rgba(255,255,255,.94);
+        color: rgba(239,229,219,.96);
         font: 500 12px/1 var(--spree-sans);
         letter-spacing: .08em;
         text-transform: uppercase;
@@ -660,7 +648,7 @@
         display: block;
         width: 22px;
         height: 34px;
-        border: 1px solid rgba(255,255,255,.72);
+        border: 1px solid rgba(227,213,199,.82);
         border-radius: 999px;
         background: rgba(0,0,0,.08);
         backdrop-filter: blur(8px);
@@ -672,7 +660,7 @@
         width: 4px;
         height: 4px;
         border-radius: 50%;
-        background: #fff;
+        background: #d8c4b0;
         transform: translateX(-50%);
         animation: spreeaiScrollDot 1.7s var(--spree-ease) infinite;
       }
@@ -771,9 +759,6 @@
         [data-spreeai-social-links] { grid-column:1 / -1; width:100%; justify-content:flex-start; gap:18px 28px; }
         [data-spreeai-footer-wordmark] { margin-top: 0; }
         [data-spreeai-pilot-frame] { width: calc(100% - 40px) !important; aspect-ratio: 16/8 !important; }
-        [data-spreeai-persistent-pilot] {
-          display: none !important;
-        }
         [data-screen-label="01 Hero"] [data-dc-tpl="17"] {
           left: 20px !important;
           right: 20px !important;
@@ -1003,24 +988,6 @@
     window.addEventListener("resize", requestUpdate, { passive: true });
     document.body.appendChild(meter);
     update();
-  }
-
-  function addPersistentPilotCta() {
-    if (document.querySelector("[data-spreeai-persistent-pilot]")) return;
-    const cta = document.createElement("a");
-    cta.dataset.spreeaiPersistentPilot = "true";
-    cta.href = "https://spreeai.com/create-account/";
-    cta.textContent = "Start a pilot";
-    cta.setAttribute("aria-label", "Start a SPREEAI pilot");
-    document.body.appendChild(cta);
-
-    const footer = document.querySelector("footer");
-    if (footer) {
-      const observer = new IntersectionObserver(function (entries) {
-        cta.dataset.hidden = entries[0].isIntersecting ? "true" : "false";
-      }, { threshold: .08 });
-      observer.observe(footer);
-    }
   }
 
   function addBrandLoader() {
@@ -1539,7 +1506,6 @@
     stabilizeMobileViewport();
     addScrollCue();
     addScrollMeter();
-    addPersistentPilotCta();
   }
 
   function applyReplacements() {
