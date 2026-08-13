@@ -991,33 +991,37 @@
   }
 
   function addBrandLoader() {
-    if (document.querySelector("[data-spreeai-loader]")) return;
+    let loader = document.querySelector("[data-spreeai-loader]");
+    if (loader && loader.dataset.spreeaiLoaderStarted) return;
     const mark = document.querySelector("nav img[alt='SPREEAI']") || document.querySelector("footer img[alt='SPREEAI']");
-    const loader = document.createElement("div");
-    loader.dataset.spreeaiLoader = "true";
-    loader.setAttribute("role", "status");
-    loader.setAttribute("aria-label", "Loading SPREEAI");
-    const loaderMark = document.createElement("div");
-    loaderMark.dataset.spreeaiLoaderMark = "true";
-    if (mark) {
-      const logo = mark.cloneNode(true);
-      logo.removeAttribute("style");
-      logo.alt = "SPREEAI";
-      loaderMark.appendChild(logo);
-    } else {
-      const wordmark = document.createElement("span");
-      wordmark.textContent = "SPREEAI";
-      wordmark.style.cssText = "font:400 clamp(46px,7vw,82px)/1 var(--spree-serif);letter-spacing:-.04em";
-      loaderMark.appendChild(wordmark);
+    if (!loader) {
+      loader = document.createElement("div");
+      loader.dataset.spreeaiLoader = "true";
+      loader.setAttribute("role", "status");
+      loader.setAttribute("aria-label", "Loading SPREEAI");
+      const loaderMark = document.createElement("div");
+      loaderMark.dataset.spreeaiLoaderMark = "true";
+      if (mark) {
+        const logo = mark.cloneNode(true);
+        logo.removeAttribute("style");
+        logo.alt = "SPREEAI";
+        loaderMark.appendChild(logo);
+      } else {
+        const wordmark = document.createElement("span");
+        wordmark.textContent = "SPREEAI";
+        wordmark.style.cssText = "font:400 clamp(46px,7vw,82px)/1 var(--spree-serif);letter-spacing:-.04em";
+        loaderMark.appendChild(wordmark);
+      }
+      const line = document.createElement("span");
+      line.dataset.spreeaiLoaderLine = "true";
+      loaderMark.appendChild(line);
+      loader.appendChild(loaderMark);
+      document.body.appendChild(loader);
     }
-    const line = document.createElement("span");
-    line.dataset.spreeaiLoaderLine = "true";
-    loaderMark.appendChild(line);
-    loader.appendChild(loaderMark);
+    loader.dataset.spreeaiLoaderStarted = "true";
     document.documentElement.dataset.spreeaiLoading = "false";
     document.documentElement.style.removeProperty("overflow");
     document.body.style.removeProperty("overflow");
-    document.body.appendChild(loader);
     const finish = function () {
       loader.dataset.exit = "true";
       setTimeout(function () { loader.remove(); }, 820);
