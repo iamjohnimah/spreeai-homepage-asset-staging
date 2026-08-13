@@ -1037,6 +1037,11 @@
     return panels;
   }
 
+  function removeRedundantPilotPanel() {
+    const panel = panelMap()["08 Pilot CTA"];
+    if (panel) panel.remove();
+  }
+
   function addSectionLabel(panel, label) {
     if (!panel || panel.querySelector("[data-spreeai-section-label]")) return;
     const item = document.createElement("div");
@@ -1499,6 +1504,7 @@
   function applyPolish() {
     injectPolishStyles();
     addBrandLoader();
+    removeRedundantPilotPanel();
     replacePilotArtwork();
     applyPlatformCopy();
     polishModelPanels();
